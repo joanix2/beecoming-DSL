@@ -3,12 +3,12 @@
 namespace opteeam_api.Models;
 
 /// <summary>  
-/// Interface repr�sentant un objet pouvant �tre archiv�.  
+/// Interface représentant un objet pouvant être archivé.  
 /// </summary>  
 public interface IArchivable
 {
     /// <summary>  
-    /// Obtient ou d�finit la date et l'heure d'archivage de l'objet.  
+    /// Obtient ou définit la date et l'heure d'archivage de l'objet.  
     /// </summary>  
     public DateTimeOffset? ArchivedAt { get; set; }
 }

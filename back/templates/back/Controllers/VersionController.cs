@@ -3,18 +3,18 @@
 namespace opteeam_api.Controllers
 {
     /// <summary>
-    /// Controller to get the version of the API
+    /// Controller utilitaire pour la version de l'API
     /// </summary>
     [ApiController]
     [Route("")]
     [Produces("application/json")]
     [Consumes("application/json")]
-    public class VersionsController : ControllerBase
+    public class VersionController : ControllerBase
     {
         /// <summary>
         /// Get the version of the API
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Version de l'API</returns>
         [HttpGet]
         [Produces("text/plain")]
         public String GetVersion()

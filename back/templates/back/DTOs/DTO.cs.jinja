@@ -1,0 +1,151 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+{% if dto.has_json_property -%}
+using System.Text.Json.Serialization;
+{% endif -%}
+{% if dto.uses_models -%}
+using {{ namespace }}.Models;
+{% endif -%}
+
+namespace {{ namespace }}.DTOs;
+
+{% if dto.input_class -%}
+public class {{ dto.input_class.name }}
+{
+    {% for property in dto.input_class.properties -%}
+    {% if property.is_required %}[Required{% if property.error_message %}(ErrorMessage = "{{ property.error_message }}"){% endif %}] {% endif -%}
+    {% if property.email_address %}[EmailAddress] {% endif -%}
+    {% if property.min_length %}[MinLength({{ property.min_length }})] {% endif -%}
+    {% if property.max_length %}[MaxLength({{ property.max_length }})] {% endif -%}
+    {% if property.compare %}[Compare(nameof({{ property.compare }}))] {% endif -%}
+    {% if property.data_type %}[DataType(DataType.{{ property.data_type }})] {% endif -%}
+    {% if property.json_property_name %}[JsonPropertyName("{{ property.json_property_name }}")] {% endif -%}
+    public {% if property.is_required %}required {% endif %}{{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}
+    {% endfor %}
+}
+
+{% endif -%}
+{% if dto.output_class -%}
+public class {{ dto.output_class.name }}{% if dto.output_class.base_class %} : {{ dto.output_class.base_class }}{% endif %}{% if dto.output_class.interfaces %}{% for interface in dto.output_class.interfaces %}, {{ interface }}{% endfor %}{% endif %}
+{
+    {% if dto.output_class.constructors -%}
+    {% for constructor in dto.output_class.constructors -%}
+    {% if constructor.sets_required_members %}[SetsRequiredMembers]
+    {% endif -%}
+    public {{ dto.output_class.name }}({% for param in constructor.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in constructor.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+    {% for property in dto.output_class.properties -%}
+    {% if property.is_required %}[Required] {% endif -%}
+    {% if property.json_property_name %}[JsonPropertyName("{{ property.json_property_name }}")] {% endif -%}
+    public {% if property.is_required %}required {% endif %}{{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}{% if property.getter_expression %} => {{ property.getter_expression }};{% endif %}
+    {% endfor %}
+    {% if dto.output_class.methods -%}
+
+    {% for method in dto.output_class.methods -%}
+    public {{ method.return_type }} {{ method.name }}({% for param in method.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in method.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+}
+
+{% endif -%}
+{% if dto.list_output_class -%}
+public class {{ dto.list_output_class.name }}{% if dto.list_output_class.base_class %} : {{ dto.list_output_class.base_class }}{% endif %}
+{
+    {% if dto.list_output_class.constructors -%}
+    {% for constructor in dto.list_output_class.constructors -%}
+    {% if constructor.sets_required_members %}[SetsRequiredMembers]
+    {% endif -%}
+    public {{ dto.list_output_class.name }}({% for param in constructor.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in constructor.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+    {% for property in dto.list_output_class.properties -%}
+    {% if property.is_required %}[Required] {% endif -%}
+    {% if property.json_property_name %}[JsonPropertyName("{{ property.json_property_name }}")] {% endif -%}
+    public {% if property.is_required %}required {% endif %}{{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}
+    {% endfor %}
+}
+
+{% endif -%}
+{% if dto.autocomplete_output_class -%}
+public class {{ dto.autocomplete_output_class.name }}
+{
+    {% if dto.autocomplete_output_class.constructors -%}
+    {% for constructor in dto.autocomplete_output_class.constructors -%}
+    {% if constructor.sets_required_members %}[SetsRequiredMembers]
+    {% endif -%}
+    public {{ dto.autocomplete_output_class.name }}({% for param in constructor.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in constructor.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+    {% for property in dto.autocomplete_output_class.properties -%}
+    {% if property.is_required %}[Required] {% endif -%}
+    public {% if property.is_required %}required {% endif %}{{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}
+    {% endfor %}
+}
+
+{% endif -%}
+{% if dto.additional_classes -%}
+{% for additional_class in dto.additional_classes %}
+public class {{ additional_class.name }}{% if additional_class.base_class %} : {{ additional_class.base_class }}{% endif %}{% if additional_class.interfaces %}{% for interface in additional_class.interfaces %}, {{ interface }}{% endfor %}{% endif %}
+{
+    {% if additional_class.constructors -%}
+    {% for constructor in additional_class.constructors -%}
+    {% if constructor.sets_required_members %}[SetsRequiredMembers]
+    {% endif -%}
+    public {{ additional_class.name }}({% for param in constructor.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in constructor.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+    {% for property in additional_class.properties -%}
+    {% if property.is_required %}[Required] {% endif -%}
+    {% if property.email_address %}[EmailAddress] {% endif -%}
+    {% if property.min_length %}[MinLength({{ property.min_length }})] {% endif -%}
+    {% if property.json_property_name %}[JsonPropertyName("{{ property.json_property_name }}")] {% endif -%}
+    {% if property.data_type %}[DataType(DataType.{{ property.data_type }})] {% endif -%}
+    public {% if property.is_required %}required {% endif %}{{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}{% if property.getter_expression %} => {{ property.getter_expression }};{% endif %}
+    {% endfor %}
+    {% if additional_class.methods -%}
+
+    {% for method in additional_class.methods -%}
+    public {{ method.return_type }} {{ method.name }}({% for param in method.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in method.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+}
+
+{% endfor -%}
+{% endif -%}

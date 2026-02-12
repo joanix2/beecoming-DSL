@@ -1,0 +1,83 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+{% if model.has_relationships or model.has_collections -%}
+using System.Collections.Generic;
+{% endif -%}
+
+namespace {{ namespace }};
+
+public class {{ model.name }} : BaseModel{% if model.is_archivable %}, IArchivable{% endif %}{% if model.has_address %}, IHasAddress{% endif %}{% if model.has_type %}, IHasType<{{ model.type_name }}>{% endif %}{% if model.has_status %}, IHasStatus<{{ model.status_name }}>{% endif %}
+{
+    {% if model.constructors -%}
+    {% for constructor in model.constructors -%}
+    public {{ model.name }}({% for param in constructor.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in constructor.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+    {% for property in model.properties -%}
+    {% if property.is_required %}[Required] {% endif -%}
+    {% if property.foreign_key %}[ForeignKey(nameof({{ property.foreign_key }}))] {% endif -%}
+    {% if property.inverse_property %}[InverseProperty(nameof({{ property.inverse_property }}))] {% endif -%}
+    {% if property.not_mapped %}[NotMapped] {% endif -%}
+    {% if property.column_type %}[Column(TypeName = "{{ property.column_type }}")] {% endif -%}
+    {% if property.database_generated %}[DatabaseGenerated(DatabaseGeneratedOption.{{ property.database_generated }})] {% endif -%}
+    public {{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}{% if property.getter_expression %} => {{ property.getter_expression }};{% endif %}
+    {% endfor %}
+    {% if model.methods -%}
+
+    {% for method in model.methods -%}
+    public {{ method.return_type }} {{ method.name }}({% for param in method.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in method.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+}
+{% if model.related_classes -%}
+
+{% for related_class in model.related_classes %}
+public class {{ related_class.name }} : {% if related_class.base_class %}{{ related_class.base_class }}{% else %}BaseModel{% endif %}{% if related_class.interfaces %}{% for interface in related_class.interfaces %}, {{ interface }}{% endfor %}{% endif %}
+{
+    {% if related_class.constructors -%}
+    {% for constructor in related_class.constructors -%}
+    public {{ related_class.name }}({% for param in constructor.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in constructor.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+    {% for property in related_class.properties -%}
+    {% if property.is_required %}[Required] {% endif -%}
+    {% if property.foreign_key %}[ForeignKey(nameof({{ property.foreign_key }}))] {% endif -%}
+    {% if property.inverse_property %}[InverseProperty(nameof({{ property.inverse_property }}))] {% endif -%}
+    {% if property.not_mapped %}[NotMapped] {% endif -%}
+    {% if property.column_type %}[Column(TypeName = "{{ property.column_type }}")] {% endif -%}
+    {% if property.database_generated %}[DatabaseGenerated(DatabaseGeneratedOption.{{ property.database_generated }})] {% endif -%}
+    public {{ property.type }}{% if property.is_nullable %}?{% endif %} {{ property.name }} { get; set; }{% if property.default_value %} = {{ property.default_value }};{% endif %}{% if property.getter_expression %} => {{ property.getter_expression }};{% endif %}
+    {% endfor %}
+    {% if related_class.methods -%}
+
+    {% for method in related_class.methods -%}
+    public {{ method.return_type }} {{ method.name }}({% for param in method.parameters %}{{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+    {
+        {% for line in method.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    {% endif -%}
+}
+{% endfor -%}
+{% endif -%}

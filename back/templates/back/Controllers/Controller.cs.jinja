@@ -1,0 +1,115 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+{% if controller.uses_odata -%}
+using Microsoft.AspNetCore.OData.Query;
+{% endif -%}
+using Microsoft.EntityFrameworkCore;
+{% if controller.uses_identity -%}
+using Microsoft.AspNetCore.Identity;
+{% endif -%}
+{% if controller.additional_usings -%}
+{% for using in controller.additional_usings -%}
+using {{ using }};
+{% endfor -%}
+{% endif -%}
+using {{ namespace }}.DTOs;
+using {{ namespace }}.Models;
+{% if controller.uses_utils -%}
+using {{ namespace }}.Utils;
+{% endif -%}
+{% if controller.uses_services -%}
+{% for service in controller.services -%}
+using {{ namespace }}.Services;
+{% endfor -%}
+{% endif -%}
+
+namespace {{ namespace }}.Controllers;
+
+/// <summary>
+/// {{ controller.description }}
+/// </summary>
+[ApiController]
+[Route("[controller]")]
+[Produces("application/json")]
+[Consumes("application/json")]
+{% if controller.authorize -%}
+[Authorize{% if controller.roles %}(Roles = "{{ controller.roles }}"){% endif %}]
+{% endif -%}
+public class {{ controller.name }}(
+    {%- for dependency in controller.dependencies -%}
+    {{ dependency.type }} {{ dependency.name }}{% if not loop.last %},
+    {% endif -%}
+    {%- endfor -%}
+) : ControllerBase
+{
+    {% for endpoint in controller.endpoints -%}
+    #region {{ endpoint.http_method }} {{ endpoint.name }}
+
+    /// <summary>
+    /// {{ endpoint.description }}
+    /// </summary>
+    {% if endpoint.parameters -%}
+    {% for param in endpoint.parameters -%}
+    /// <param name="{{ param.name }}">{{ param.description }}</param>
+    {% endfor -%}
+    {% endif -%}
+    {% if endpoint.authorize -%}
+    [Authorize{% if endpoint.roles %}(Roles = "{{ endpoint.roles }}"){% endif %}]
+    {% endif -%}
+    {% if endpoint.allow_anonymous -%}
+    [AllowAnonymous]
+    {% endif -%}
+    [Http{{ endpoint.http_method }}{% if endpoint.route %}("{{ endpoint.route }}"){% endif %}]
+    {% if endpoint.consumes -%}
+    [Consumes("{{ endpoint.consumes }}")]
+    {% endif -%}
+    {% if endpoint.produces -%}
+    [Produces("{{ endpoint.produces }}")]
+    {% endif -%}
+    public async Task<ActionResult<{{ endpoint.return_type }}>> {{ endpoint.method_name }}(
+        {%- for param in endpoint.method_parameters -%}
+        {% if param.from_body %}[FromBody] {% endif -%}
+        {% if param.from_query %}[FromQuery] {% endif -%}
+        {% if param.from_route %}[FromRoute] {% endif -%}
+        {% if param.from_form %}[FromForm] {% endif -%}
+        {{ param.type }}{% if param.is_nullable %}?{% endif %} {{ param.name }}{% if param.default_value %} = {{ param.default_value }}{% endif %}{% if not loop.last %},
+        {% endif -%}
+        {%- endfor -%}
+    )
+    {
+        {% if endpoint.validate_model_state -%}
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        {% endif -%}
+        {% for line in endpoint.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    #endregion
+
+    {% endfor -%}
+    {% if controller.private_methods -%}
+    #region Private Methods
+
+    {% for method in controller.private_methods -%}
+    /// <summary>
+    /// {{ method.description }}
+    /// </summary>
+    private {% if method.is_async %}async Task<{{ method.return_type }}>{% else %}{{ method.return_type }}{% endif %} {{ method.name }}(
+        {%- for param in method.parameters -%}
+        {{ param.type }} {{ param.name }}{% if not loop.last %}, {% endif -%}
+        {%- endfor -%}
+    )
+    {
+        {% for line in method.body -%}
+        {{ line }}
+        {% endfor -%}
+    }
+
+    {% endfor -%}
+    #endregion
+
+    {% endif -%}
+}
