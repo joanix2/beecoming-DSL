@@ -1,0 +1,12 @@
+<div class="!mr-0 mt-2 flex items-center !pr-0">
+  <button matFab extended (click)="onAction($event)" [matTooltip]="tooltipLabel" class="hover:shadow-lg">
+    @if (!selected || !selectedIcon) {
+      <mat-icon [svgIcon]="icon" class="!m-0 text-sm font-normal" [class]="class"></mat-icon>
+    } @else {
+      <mat-icon [svgIcon]="selectedIcon" class="!m-0 text-sm font-normal" [class]="class"></mat-icon>
+    }
+  </button>
+  @if (showText) {
+    <span class="pl-2 text-sm">{{ params.data?.[key] ?? '' }}</span>
+  }
+</div>

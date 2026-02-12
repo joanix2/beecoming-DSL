@@ -1,0 +1,24 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <span class="flex items-center gap-2 text-lg font-bold">
+      <mat-icon svgIcon="types"></mat-icon>
+      {{ tr.language().ORDER_TYPE_LIST }}
+    </span>
+
+    <button mat-stroked-button color="primary" (click)="goToDetails('new')">
+      {{ tr.language().ADD_ORDER_TYPE }}
+    </button>
+  </div>
+
+  <div class="h-[40vh]">
+    <app-datagrid
+      #datagrid
+      (rowClick)="goToDetails($event.id)"
+      [columnDefs]="columnDefs()"
+      [data]="orderTypesSignal()"
+      [fetchParamsSignal]="fetchParamsSignal"
+      [rowCountSignal]="orderTypesCount"
+      [datagridName]="datagridName()"
+    ></app-datagrid>
+  </div>
+</div>

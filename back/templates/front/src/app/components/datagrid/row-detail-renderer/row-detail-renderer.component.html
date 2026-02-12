@@ -1,0 +1,130 @@
+<div class="mt-3">
+  <div [matTooltip]="params.value" class="flex items-center gap-2" matTooltipPosition="after">
+    @if (gotData()) {
+      <div class="mt-[-20px] size-4">
+        <mat-icon
+          (click)="toggleDetails($event)"
+          (keydown.enter)="toggleDetails($event)"
+          [svgIcon]="iconComputed()"
+          [class.rotate-180]="!isClosed()"
+          class="icon-size cursor-pointer transition-transform duration-200 hover:shadow-lg"
+        ></mat-icon>
+      </div>
+    }
+    <p class="">{{ params.value }}</p>
+  </div>
+
+  @if (!isClosed() && children.length > 0) {
+    <div
+      class="fixed left-0 z-50 mt-4 flex flex-col divide-y divide-black/15 border-t border-black/15"
+      style="width: calc(100vw - 2rem); max-width: 100%"
+    >
+      @for (child of children; track child; let indexData = $index) {
+        <div class="flex w-full" [class.cursor-pointer]="true" (click)="handleItemClick($event, child)">
+          @if (getDisplayColumns().length > 0) {
+            <!-- Template générique basé sur les displayColumns configurées -->
+            @for (displayCol of getDisplayColumns(); track displayCol.key; let i = $index) {
+              <div
+                class="flex h-[46px] items-center truncate"
+                [class]="i === 0 ? 'pl-10' : 'pl-2'"
+                [style.width]="getColumnWidth(i)"
+              >
+                @if (displayCol.columnHeader) {
+                  <span class="mr-1">{{ displayCol.columnHeader }} :</span>
+                }
+                @switch (displayCol.type) {
+                  @case ('chip') {
+                    <app-chip
+                      [value]="getNestedValue(child, displayCol.key)"
+                      [color]="displayCol.colorKey ? getNestedValue(child, displayCol.colorKey) : '#666'"
+                    ></app-chip>
+                  }
+                  @case ('color') {
+                    <div class="flex h-[46px] items-center gap-2">
+                      <div
+                        class="h-5 w-5 rounded-full"
+                        [style.backgroundColor]="getNestedValue(child, displayCol.key)"
+                      ></div>
+                      <span class="text-sm">{{ getNestedValue(child, displayCol.key) | uppercase }}</span>
+                    </div>
+                  }
+                  @case ('date') {
+                    <span class="text-sm">{{ getNestedValue(child, displayCol.key) | date: 'dd/MM/yyyy' }}</span>
+                  }
+                  @case ('custom') {
+                    <span
+                      class="text-sm"
+                      [innerHTML]="
+                        displayCol.customTemplate
+                          ? displayCol.customTemplate(getNestedValue(child, displayCol.key), child)
+                          : getNestedValue(child, displayCol.key)
+                      "
+                    ></span>
+                  }
+                  @case ('icon') {
+                    <app-icon-cell
+                      [params]="{
+                        iconType: getNestedValue(child, displayCol.key),
+                        iconColor: '#000000',
+                        showIcon: true,
+                        showIconName: false,
+                      }"
+                    ></app-icon-cell>
+                  }
+                  @default {
+                    <span class="text-sm">{{ getNestedValue(child, displayCol.key) }}</span>
+                  }
+                }
+              </div>
+            }
+
+            <!-- Ajouter les colonnes vides manquantes pour l'alignement -->
+            @for (emptyCol of getEmptyColumns(); track emptyCol.index) {
+              <div class="flex h-[46px] items-center truncate" [style.width]="emptyCol.width">
+                <!-- Colonne vide pour l'alignement -->
+              </div>
+            }
+          } @else {
+            <!-- TODO: À supprimer quand on aura mis à jour OrderListComponent -->
+            <!-- Template par défaut pour les missions (rétrocompatibilité) -->
+            @for (column of params.api.getColumns(); track column; let i = $index) {
+              <div
+                class="{{ getClass(column.getColDef(), child) }} truncate"
+                [style.width]="getWidth(column.getActualWidth(), i)"
+              >
+                @switch (column.getColDef().field) {
+                  @case ('displayId') {
+                    <span class="text-sm">{{ child.displayId }}</span>
+                  }
+                  @case ('type') {
+                    <div class="flex items-center gap-2">
+                      <span class="size-4 rounded" [style.background-color]="child.type?.color"></span>
+                      <span class="text-sm">{{ child.type?.name }}</span>
+                    </div>
+                  }
+                  @case ('surface') {
+                    <span class="text-sm">{{ child.surface }}</span>
+                  }
+                  @case ('teamLeader') {
+                    <div class="flex items-center gap-2">
+                      <span class="flex size-6 items-center justify-center rounded-full bg-gray-300 text-xs">
+                        {{ child.teamLeader?.firstname?.charAt(0) }}{{ child.teamLeader?.lastname?.charAt(0) }}
+                      </span>
+                      <span class="text-sm">{{ child.teamLeader?.firstname }} {{ child.teamLeader?.lastname }}</span>
+                    </div>
+                  }
+                  @case ('status') {
+                    <app-chip [value]="child.status?.name" [color]="child.status?.color"></app-chip>
+                  }
+                  @default {
+                    <span class="text-sm">{{ getNestedValue(child, column.getColDef().field || '') }}</span>
+                  }
+                }
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

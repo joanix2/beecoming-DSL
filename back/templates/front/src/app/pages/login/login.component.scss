@@ -1,0 +1,51 @@
+.right {
+  z-index: -1;
+  flex: 65%;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.left {
+  flex: 35%;
+}
+
+.reset-password > a {
+  cursor: pointer;
+}
+
+// Styles spécifiques pour Material Design qui ne peuvent pas être remplacés par Tailwind
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  border-radius: 8px;
+}
+
+// Optimisations pour les petits écrans (hauteur)
+@media (max-height: 600px) {
+  .mobile-header {
+    height: 25% !important;
+  }
+
+  .mobile-content {
+    height: 75% !important;
+  }
+
+  .mobile-logo {
+    height: 40px !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+mat-icon {
+  ::ng-deep {
+    svg {
+      fill: currentColor;
+    }
+
+    path {
+      fill: currentColor;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+<div class="flex flex-row items-center gap-2 pl-2" [matTooltip]="tooltip()">
+  @if (leftSwitchWord()) {
+    <span
+      class="cursor-pointer text-secondary"
+      [class]="isChecked() ? 'opacity-50' : ''"
+      (click)="toggle.checked = false; onSwitchChange(false); $event.stopPropagation()"
+    >
+      {{ leftSwitchWord() }}
+    </span>
+  }
+  <div class="relative inline-block h-6 w-10">
+    <input
+      #toggle
+      [checked]="isChecked()"
+      (change)="$event.preventDefault(); $event.stopPropagation(); onSwitchChange(toggle.checked)"
+      id="switch-component"
+      (click)="$event.stopPropagation()"
+      type="checkbox"
+      class="peer h-6 w-10 cursor-pointer appearance-none rounded-full bg-gray-300 transition-colors duration-300 checked:bg-primary"
+    />
+    <label
+      for="switch-component"
+      class="absolute left-0.5 top-0.5 h-5 w-5 cursor-pointer rounded-full bg-white shadow-lg transition-transform duration-300 peer-checked:translate-x-4"
+    ></label>
+  </div>
+  @if (rightSwitchWord()) {
+    <span
+      class="cursor-pointer text-secondary"
+      [class]="isChecked() ? '' : 'opacity-50'"
+      (click)="toggle.checked = true; onSwitchChange(true); $event.stopPropagation()"
+    >
+      {{ rightSwitchWord() }}
+    </span>
+  }
+</div>

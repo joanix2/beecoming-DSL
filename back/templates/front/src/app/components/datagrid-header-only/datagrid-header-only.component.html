@@ -1,0 +1,21 @@
+<div class="flex h-[50px] w-full items-center gap-2">
+  <button mat-stroked-button (click)="back.emit()">
+    <mat-icon class="!ml-0 !mr-0">arrow_back_ios</mat-icon>
+  </button>
+
+  <ag-grid-angular
+    #agGrid
+    [popupParent]="popupParent"
+    (filterChanged)="onFilterChanged($event)"
+    (firstDataRendered)="onFirstDataRendered()"
+    (gridReady)="onGridReady($event)"
+    [autoSizeStrategy]="{ type: 'fitGridWidth' }"
+    [columnDefs]="columnDefs"
+    [gridOptions]="options"
+    [localeText]="localeTextComputed()"
+    [rowClass]="'cursor-pointer'"
+    [rowData]="[]"
+    [rowHeight]="48"
+    class="h-[50px] w-full"
+  />
+</div>

@@ -1,0 +1,97 @@
+@if (settings()) {
+  <h3 class="flex items-center gap-2 font-bold">
+    <mat-icon svgIcon="info"></mat-icon>
+    {{ tr.language().COMPANY_INDENTITY }}
+  </h3>
+
+  <div class="flex flex-col gap-4 divide-y divide-gray-200">
+    <div class="flex flex-col gap-2">
+      <h4 class="text-lg font-bold">{{ tr.language().COMPANY_INFORMATIONS }}</h4>
+      <div class="grid grid-cols-4 gap-3">
+        <!-- Company name -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().COMPANY_NAME }}</span>
+          <p>{{ settings()?.companyName }}</p>
+        </div>
+
+        <!-- SIREN number -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().SIREN_NUMBER }}</span>
+          <p>{{ settings()?.sirenNumber }}</p>
+        </div>
+
+        <!-- Legal form -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().LEGAL_FORM }}</span>
+          <p>{{ settings()?.legalForm }}</p>
+        </div>
+
+        <!-- APE code -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().APE_CODE }}</span>
+          <p>{{ settings()?.apeCode }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <h4 class="text-lg font-bold">{{ tr.language().BILLING_ADDRESS }}</h4>
+
+      <div class="grid grid-cols-4 gap-3">
+        <!-- Street -->
+        <div class="col-span-2 flex flex-col gap-2">
+          <span>{{ tr.language().FORM_ADDRESS }}</span>
+          <p>{{ settings()?.billingAddress?.street }}</p>
+        </div>
+
+        <!-- City -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().FORM_CITY }}</span>
+          <p>{{ settings()?.billingAddress?.city }}</p>
+        </div>
+
+        <!-- Zip code -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().FORM_ZIP }}</span>
+          <p>{{ settings()?.billingAddress?.postalCode }}</p>
+        </div>
+
+        <!-- Complementary information -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().FORM_SUPPLEMENT }}</span>
+          <p>{{ settings()?.billingAddress?.additionalInfo }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <h4 class="text-lg font-bold">{{ tr.language().CONTACT_INFORMATIONS }}</h4>
+
+      <div class="grid grid-cols-4 gap-3">
+        <!-- Email -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().COMPANY_PHONE }}</span>
+          <p class="cursor-pointer underline" (click)="callPhone()">{{ settings()?.phone }}</p>
+        </div>
+
+        <!-- Fax -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().COMPANY_FAX }}</span>
+          <p>{{ settings()?.fax }}</p>
+        </div>
+
+        <!-- URL -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().COMPANY_URL }}</span>
+          <p class="cursor-pointer underline" (click)="openUrl()">{{ settings()?.url }}</p>
+        </div>
+
+        <!-- Email -->
+        <div class="flex flex-col gap-2">
+          <span>{{ tr.language().COMPANY_EMAIL }}</span>
+          <p class="cursor-pointer underline" (click)="openEmail()">{{ settings()?.email }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+}

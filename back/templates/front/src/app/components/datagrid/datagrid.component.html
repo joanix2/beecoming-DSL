@@ -1,0 +1,79 @@
+<div class="grid-container hidden full-list:block">
+  <ag-grid-angular
+    #agGrid
+    (filterChanged)="onFilterChanged($event)"
+    (firstDataRendered)="onFirstDataRendered()"
+    (gridReady)="onGridReady($event)"
+    (rowClicked)="rowClick.emit($event.data)"
+    (sortChanged)="onSortChanged()"
+    [autoSizeStrategy]="{ type: 'fitGridWidth' }"
+    [columnDefs]="columnDefs"
+    [gridOptions]="options"
+    [localeText]="localeTextComputed()"
+    [rowClass]="'cursor-pointer'"
+    [rowData]="data"
+    [rowHeight]="48"
+    class="h-full min-h-[250px] w-full"
+  />
+</div>
+
+<!-- responsive -->
+<div class="flex flex-col gap-2 full-list:hidden">
+  @if (data.length === 0) {
+    <p>{{ localeTextComputed().noDataToChart }}</p>
+  } @else {
+    @for (element of $any(data); track indexData; let indexData = $index) {
+      <div
+        class="relative flex w-full flex-col gap-2 rounded border bg-white p-4"
+        (click)="rowClick.emit(element)"
+        (keydown.enter)="rowClick.emit(element)"
+      >
+        @for (column of columnDefs; track column) {
+          <div class="flex gap-2 {{ column.cellClass }} flex items-center text-sm">
+            @if (column.headerName) {
+              <div class="text-sm {{ column.headerClass }}">{{ column.headerName }} :</div>
+            }
+            @if (column.cellRenderer) {
+              @switch (column.cellRenderer) {
+                @case ('ChipComponent') {
+                  <app-chip [value]="element[column.field].name" [color]="element[column.field].color"></app-chip>
+                }
+                @case ('RowDetailRendererComponent') {
+                  <p>{{ element[column.field] }}</p>
+                }
+                @default {}
+              }
+            } @else if (column.valueGetter && typeof column.valueGetter === 'function') {
+              <span>{{ valueGetterFromDataAndColDef(element, column) }}</span>
+            } @else {
+              <span>{{ element[column.field] }}</span>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<div
+  class="flex w-full items-center"
+  [ngClass]="editModeSignal() || paginationEnabledSignal() ? 'justify-between' : 'justify-end'"
+>
+  @if (editModeSignal() && textAddButton) {
+    <button (click)="addRow()" [disabled]="actionRowSignal()" class="tertiary h-fit !min-w-fit" type="submit">
+      {{ textAddButton }}
+    </button>
+  }
+  @if (paginationEnabledSignal()) {
+    <mat-paginator
+      #matPaginator
+      (page)="onPaginateChanged($event)"
+      [length]="rowCountSignal()"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      [pageSize]="numberElementPerPages"
+      class="w-full !bg-transparent"
+    ></mat-paginator>
+  } @else {
+    <div class="mr-1 flex h-[44px] items-center">{{ elementTextComputed() }}</div>
+  }
+</div>

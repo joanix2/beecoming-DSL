@@ -1,0 +1,16 @@
+<div class="flex flex-col gap-2">
+  <mat-label class="filed-label !text-secondary">{{ label }}</mat-label>
+
+  @if (isEditMode()) {
+    <mat-form-field>
+      <input matInput [matDatepicker]="picker" [formControl]="formControl" [min]="min()" [max]="max()" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker [startAt]="formControl.value"></mat-datepicker>
+    </mat-form-field>
+    <app-error-message [control]="formControl" [errors]="errors"></app-error-message>
+  } @else {
+    @if (formControl.value) {
+      <p>{{ formControl.value | date: 'dd/MM/yyyy' }}</p>
+    }
+  }
+</div>

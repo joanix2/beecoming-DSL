@@ -1,0 +1,30 @@
+<div class="flex h-full items-center justify-between gap-2">
+  @if (editCurrentLigneSignal()) {
+    <button
+      mat-icon-button
+      class="custom-color-icon !rounded-full"
+      [ngStyle]="{ '--custom-color': 'var(--colors-status-error)' }"
+      (click)="onCancelEdit()"
+    >
+      <mat-icon svgIcon="quit"></mat-icon>
+    </button>
+    <button mat-icon-button class="!rounded-full" (click)="onSaveEdit()">
+      <mat-icon svgIcon="check"></mat-icon>
+    </button>
+  } @else {
+    @if (showEdit) {
+      <button mat-icon-button class="!rounded-full" (click)="onEdit()">
+        <mat-icon svgIcon="edit"></mat-icon>
+      </button>
+    }
+    @if (showDelete) {
+      <button mat-icon-button class="!rounded-full" (click)="onDelete()">
+        <mat-icon
+          class="custom-color-icon"
+          [ngStyle]="{ '--custom-color': 'var(--colors-status-error)' }"
+          svgIcon="delete"
+        ></mat-icon>
+      </button>
+    }
+  }
+</div>

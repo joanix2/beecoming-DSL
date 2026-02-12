@@ -1,0 +1,23 @@
+<div class="grid h-full grid-cols-1 grid-rows-[auto_1fr] gap-6">
+  @if (!commandeMissionService.isMapViewSignal()) {
+    <app-header-list
+      [searchTitle]="tr.language().SEARCH_WITH_DOTS"
+      [searchPlaceholderInput]="searchPlaceholderInput()"
+      [textButton]="createButtonText()"
+      [showSwitch]="true"
+      [showMapView]="true"
+      [isChecked]="isMissionSignal()"
+      (onCreateClick)="gotoCreateNew()"
+      (onToggleChange)="switchOrderMission($event)"
+      (onInputChange)="onSearchInput($event)"
+    ></app-header-list>
+  } @else {
+    <div class="flex h-full w-full"></div>
+  }
+
+  @if (isMissionSignal()) {
+    <app-missions-list #missionsList></app-missions-list>
+  } @else {
+    <app-orders-list #ordersList></app-orders-list>
+  }
+</div>

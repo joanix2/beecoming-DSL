@@ -1,0 +1,51 @@
+<div class="flex h-full flex-col gap-2">
+  <mat-label class="filed-label !text-secondary">{{ label }}</mat-label>
+
+  @if (isEditMode()) {
+    <mat-form-field>
+      <mat-select
+        [formControl]="formControl"
+        [placeholder]="placeholder"
+        (selectionChange)="onValueChange($event.value)"
+        [compareWith]="compareOptions"
+      >
+        <!-- Trigger personnalisé pour afficher l'icône sélectionnée -->
+        @if (render === 'icon' && formControl.value) {
+          <mat-select-trigger>
+            <img [src]="formControl.value.iconUrl" alt="icon" class="inline-block h-6 w-6" />
+            <span class="ml-2">{{ formControl.value.name }}</span>
+          </mat-select-trigger>
+        }
+
+        @for (option of options; track option) {
+          <mat-option [value]="option" [disabled]="isDisabled()">
+            @if (render === 'icon') {
+              <img [src]="option.iconUrl" alt="icon" class="mr-2 inline-block h-6 w-6" />
+              <span>{{ option.name }}</span>
+            } @else {
+              {{ option.name }}
+            }
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <app-error-message [control]="formControl" [errors]="errors"></app-error-message>
+  } @else {
+    @if (value && value.length > 0) {
+      @if (render === 'chip') {
+        @for (chip of value; track chip) {
+          <app-chip [value]="chip.name" [color]="chip.color ?? 'purple'"></app-chip>
+        }
+      } @else if (render === 'icon') {
+        @for (icon of value; track icon) {
+          <div class="flex items-center gap-2">
+            <img [src]="$any(icon).iconUrl" alt="icon" class="h-6 w-6" />
+            <p>{{ icon.name }}</p>
+          </div>
+        }
+      } @else if (render === 'select') {
+        <p>{{ formControl.value?.name }}</p>
+      }
+    }
+  }
+</div>

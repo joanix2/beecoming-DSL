@@ -1,0 +1,79 @@
+<div
+  #mainContainer
+  class="container-image-carousel mx-auto flex w-full flex-col items-center overflow-hidden rounded-lg border border-gray-200 font-sans"
+>
+  <!-- Main Image Display Area -->
+  <div class="relative flex aspect-[4/3] max-h-[500px] w-full items-center justify-center bg-gray-100 md:aspect-square">
+    <img
+      *ngIf="selectedImage() as imgUrl; else noImage"
+      [src]="imgUrl"
+      alt="Selected Product Image"
+      class="absolute left-0 top-0 h-full w-full object-contain"
+    />
+    <ng-template #noImage>
+      <div class="text-lg text-gray-500">{{ tr.language().MISSION_NO_IMAGE_SELECTED }}</div>
+    </ng-template>
+  </div>
+
+  <!-- Thumbnail Navigation Section -->
+  <div class="scrollbar-hidden flex w-full flex-row items-center justify-between gap-2 px-4">
+    <div class="flex items-center justify-between overflow-hidden p-2 sm:p-1 md:max-w-[50%]">
+      <button
+        mat-icon-button
+        class="nav-button prev-button nav-button !rounded-full"
+        (click)="scrollThumbnails('prev')"
+        [disabled]="!canScrollLeft()"
+        aria-label="Previous images"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="scrollbar-hidden flex-grow overflow-hidden p-2">
+        <div
+          #thumbnailContainer
+          class="scrollbar-hidden flex overflow-x-auto scroll-smooth"
+          (scroll)="updateScrollButtonStates()"
+        >
+          <div *ngFor="let image of imagesUrls(); let i = index" class="relative mr-2 last:mr-0">
+            <button
+              (click)="selectImage(i)"
+              [attr.aria-label]="'View image ' + (i + 1)"
+              class="h-[45px] w-[45px] flex-none transform cursor-pointer overflow-hidden !rounded-lg border-2 bg-white p-0 transition-colors duration-300 ease-in-out hover:scale-105 hover:border-gray-400 sm:h-10 sm:w-10 md:h-[50px] md:w-[50px]"
+              [ngClass]="{
+                'scale-105 border-blue-500 shadow-lg': selectedIndex() === i,
+                'border-transparent': selectedIndex() !== i,
+              }"
+            >
+              <img [src]="image.url" [alt]="'Thumbnail ' + (i + 1)" class="block h-full w-full object-cover" />
+            </button>
+
+            <!-- Delete button for thumbnail -->
+            <button
+              mat-icon-button
+              class="absolute -right-1 -top-1 z-10 h-5 w-5 min-w-0 !rounded-full bg-red-500 text-white hover:bg-red-600"
+              (click)="deleteImage(image)"
+              aria-label="Delete image"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button
+        mat-icon-button
+        class="nav-button next-button"
+        (click)="scrollThumbnails('next')"
+        [disabled]="!canScrollRight()"
+        aria-label="Next images"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    <button mat-stroked-button class="my-2 !min-w-fit" icon="center" (click)="uploadInput.click()">
+      <mat-icon class="!m-0 flex justify-center">add</mat-icon>
+      <span class="small-hidden">{{ tr.language().MISSION_ADD_IMAGE }}</span>
+    </button>
+  </div>
+</div>
+<input #uploadInput type="file" (change)="uploadImage($event)" hidden [accept]="acceptedMimeTypes" multiple />

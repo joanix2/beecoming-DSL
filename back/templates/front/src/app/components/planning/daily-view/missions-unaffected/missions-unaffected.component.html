@@ -1,0 +1,57 @@
+<!-- unaffected missions -->
+<div class="py-default flex flex-1 flex-col overflow-y-auto rounded">
+  <!-- header -->
+  <div class="p-default flex h-12 h-[48px] flex-row items-center gap-2 rounded-se rounded-ss bg-secondary p-3">
+    <div class="pr-default flex h-full flex-row items-center gap-1 border-white">
+      <mat-icon [svgIcon]="'mission'" class="custom-color-icon !text-white" style="--custom-color: 'white'"></mat-icon>
+      <p class="font-bold text-white">
+        {{ tr.language().MISSIONS_UNAFFECTED }}
+      </p>
+    </div>
+    <div class="flex h-full flex-row items-center gap-1 border-l-2 border-r-2 border-white pl-2 pr-2">
+      <button
+        class="previous-next-week-planning previous-next-week-planning rounded-es !text-white"
+        mat-stroked-button
+        type="button"
+        (click)="missionsPreviousDay()"
+      >
+        <
+      </button>
+      <div class="text-center text-white" [ngClass]="isWeeklyViewSignal() ? 'w-[3rem]' : 'w-[10rem]'">
+        @if (isWeeklyViewSignal()) {
+          <span>{{ selectedDateSignal() | customWeek: today }}</span>
+        } @else {
+          <span>{{ internalSelectedDateSignal().setLocale('fr').toFormat('cccc, dd LLLL') }}</span>
+        }
+      </div>
+
+      <button
+        class="previous-next-week-planning previous-next-week-planning !text-white"
+        mat-stroked-button
+        type="button"
+        (click)="missionsNextDay()"
+      >
+        >
+      </button>
+    </div>
+  </div>
+  <!-- main -->
+  <div
+    (cdkDropListDropped)="drop($event)"
+    [cdkDropListConnectedTo]="['unaffected'].concat(connectedToIds())"
+    [cdkDropListData]="unaffectedMissionsSignal()"
+    cdkDropList
+    [class.cursor-grab]="!shouldDisableDrag()"
+    class="flex h-[180px] gap-1 overflow-y-auto rounded-ee rounded-es bg-[#F1F5F9] bg-clip-padding p-3"
+    id="unaffected"
+  >
+    @for (mission of unaffectedMissionsSignal(); track mission.id) {
+      <app-mission-card-daily
+        cdkDrag
+        [cdkDragData]="{ mission }"
+        [cdkDragDisabled]="shouldDisableDrag()"
+        [mission]="mission"
+      ></app-mission-card-daily>
+    }
+  </div>
+</div>

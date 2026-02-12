@@ -1,0 +1,42 @@
+// Force white color on mat-select with maximum specificity
+:host ::ng-deep mat-select {
+  color: white !important;
+
+  * {
+    color: white !important;
+  }
+}
+
+// Target all possible mat-select elements in this component
+:host ::ng-deep .mat-mdc-select-trigger {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-select-value-text {
+  color: white !important;
+}
+
+:host ::ng-deep .mat-mdc-select-arrow {
+  color: white !important;
+}
+
+// Style the dropdown panel options with maximum specificity
+::ng-deep .custom-operator-select-panel {
+  // background-color: rgba(250, 250, 250, 0.1) !important;
+  // color: rgb(0, 0, 0) !important;
+
+  .mat-mdc-option {
+    color: rgb(5, 5, 5) !important;
+    background-color: transparent !important;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    &.mat-mdc-option-selected {
+      color: white !important;
+      background-color: rgba(0, 123, 255, 0.3) !important;
+      font-weight: bold !important;
+    }
+  }
+}

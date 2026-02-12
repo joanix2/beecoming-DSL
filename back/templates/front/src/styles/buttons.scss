@@ -1,0 +1,134 @@
+button {
+  cursor: pointer;
+  border-radius: 5px !important;
+  color: black;
+}
+
+button[type='submit'] {
+  position: relative;
+  background: $primary;
+  color: white;
+  font-size: 14px;
+  border: none;
+  padding: 10px 26px;
+  overflow: hidden;
+  min-width: 100px;
+  height: 100%;
+  font-weight: 500;
+
+  &:hover {
+    background: $primaryHover;
+
+    .custom-color-icon svg {
+      fill: var(--custom-color-hover) !important;
+      color: var(--custom-color-hover) !important;
+    }
+
+    .custom-color-icon path {
+      fill: var(--custom-color-hover) !important;
+    }
+  }
+
+  &:disabled {
+    background: $primaryDisabled !important;
+    cursor: not-allowed;
+  }
+
+  &.secondary {
+    background: $secondary;
+
+    &:hover {
+      background: $secondaryHover;
+    }
+
+    &:disabled {
+      background: $secondaryDisabled !important;
+    }
+  }
+
+  &.tertiary {
+    background-color: white;
+    border: 1px solid $primary;
+    padding: 10px 26px;
+    color: $primary;
+  }
+
+  &.success {
+    background: $success;
+
+    &:hover {
+      background: $successHover;
+    }
+
+    &:disabled {
+      background: $successDisabled !important;
+      color: $dangerDisabledText !important;
+    }
+  }
+
+  &.danger {
+    background-color: white;
+    border: 2px solid $danger;
+    padding: 10px 26px;
+    color: $danger;
+
+    &:hover {
+      border: 2px solid $dangerHover;
+      padding: 10px 26px;
+      color: white;
+      background: $dangerHover;
+    }
+
+    &:disabled {
+      border: 2px solid $dangerDisabled !important;
+      padding: 10px 26px;
+      color: $dangerDisabledText !important;
+      background: $dangerDisabled !important;
+    }
+  }
+}
+
+button.mdc-icon-button {
+  display: flex;
+}
+
+button[mat-stroked-button] {
+  border-color: $primary !important;
+
+  &:active {
+    color: white !important;
+    background-color: $primary !important;
+  }
+
+  &:disabled {
+    border-color: $primaryDisabled !important;
+  }
+}
+
+button[mat-button] {
+  &:active {
+    color: white !important;
+    background-color: $primaryHover !important;
+  }
+
+  &:focus {
+    color: white !important;
+    background-color: $primaryHover !important;
+  }
+
+  &:active:focus {
+    color: white !important;
+    background-color: $primaryHover !important;
+  }
+
+  // Pour Material Angular spécifiquement
+  &.mdc-button--unelevated:active,
+  &.mdc-button:active {
+    color: white !important;
+    background-color: $primaryHover !important;
+  }
+}
+
+.mat-mdc-button:not([disabled]) {
+  color: $secondary !important;
+}

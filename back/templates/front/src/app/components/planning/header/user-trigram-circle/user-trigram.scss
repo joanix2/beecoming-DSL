@@ -1,0 +1,10 @@
+.draggable-item {
+  cursor: grab;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+.draggable-item.dragging {
+  cursor: grabbing;
+  opacity: 0.6;
+}

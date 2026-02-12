@@ -1,0 +1,37 @@
+<div class="flex w-full justify-between">
+  <div class="flex flex-row items-center gap-4 divide-x-2">
+    <div class="flex flex-row items-center justify-center gap-4">
+      <label for="searchInput" class="text-nowrap text-lg">{{ searchTitle() }}</label>
+
+      <input id="searchInput" matInput [placeholder]="searchPlaceholderInput()" [formControl]="searchWordControl" />
+    </div>
+    @if (showSwitch()) {
+      <app-switch-button
+        [isChecked]="isChecked()"
+        (onToggleChange)="onSwitchChange($event)"
+        [leftSwitchWord]="tr.language().ORDERS"
+        [rightSwitchWord]="tr.language().MISSIONS"
+      ></app-switch-button>
+    }
+  </div>
+
+  <div class="flex w-1/3 justify-end gap-4">
+    @if (showMapView()) {
+      <button mat-stroked-button [class]="isChecked() ? 'w-1/3' : 'w-1/2'" type="button" (click)="onCarteView()">
+        <span class="line-clamp-1 truncate whitespace-normal">
+          {{ tr.language().MAP_VIEW }}
+        </span>
+      </button>
+    }
+
+    @if (isChecked()) {
+      <button mat-stroked-button class="w-1/3" type="button" (click)="onCreate()">
+        <span class="line-clamp-1 truncate whitespace-normal">{{ tr.language().MASS_EDITION }}</span>
+      </button>
+    }
+
+    <button mat-flat-button [class]="isChecked() ? 'w-1/3' : 'w-1/2'" type="button" (click)="onCreate()">
+      <span class="line-clamp-1 truncate whitespace-normal">{{ textButton() }}</span>
+    </button>
+  </div>
+</div>

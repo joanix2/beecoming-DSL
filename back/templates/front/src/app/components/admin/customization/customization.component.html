@@ -1,0 +1,143 @@
+<span class="flex items-center gap-2 text-lg font-bold">
+  <mat-icon svgIcon="color"></mat-icon>
+  {{ tr.language().CUSTOMAZITION }}
+</span>
+
+<div class="flex flex-col gap-4 divide-y divide-gray-200 pt-6">
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex items-center gap-12 self-stretch">
+      @if (defaultLogo()) {
+        <img [src]="this.logoFormControl.value?.url || this.defaultLogo()" alt="logo" class="h-20 w-20" />
+      } @else {
+        <img src="assets/icons/base_logo.svg" alt="logo" class="h-20 w-20" />
+      }
+
+      <div class="flex flex-1 flex-col gap-4">
+        <span class="font-semibold text-secondary">{{ tr.language().IMPORT_LOGO }}</span>
+
+        @if (this.logoFormControl.value) {
+          <button mat-stroked-button color="primary" class="w-fit" (click)="uploadLogo(this.logoFormControl.value)">
+            {{ tr.language().UPLOAD_LOGO }}
+          </button>
+        } @else {
+          <button mat-stroked-button color="primary" class="w-fit" (click)="importLogo()">
+            {{ tr.language().IMPORT_LOGO }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="flex items-center gap-12 self-stretch">
+      @if (defaultFlavicon()) {
+        <img [src]="this.flaviconFormControl.value?.url || this.defaultFlavicon()" alt="logo" class="h-20 w-20" />
+      } @else {
+        <img src="assets/icons/base_logo.svg" alt="logo" class="h-20 w-20" />
+      }
+
+      <div class="flex flex-1 flex-col gap-4">
+        <span class="font-semibold text-secondary">{{ tr.language().IMPORT_FLAVICON }}</span>
+
+        @if (this.flaviconFormControl.value) {
+          <button
+            mat-stroked-button
+            color="primary"
+            class="w-fit"
+            (click)="uploadFlavicon(this.flaviconFormControl.value)"
+          >
+            {{ tr.language().UPLOAD_FLAVICON }}
+          </button>
+        } @else {
+          <button mat-stroked-button color="primary" class="w-fit" (click)="importFlavicon()">
+            {{ tr.language().IMPORT_FLAVICON }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+  <!-- colors -->
+  <div class="grid grid-cols-3 gap-2 pt-6">
+    <app-edit-text-field
+      type="color"
+      [label]="tr.language().PRIMARY_COLOR"
+      [errors]="[{ validator: 'required', message: 'La couleur principale est obligatoire' }]"
+      [formControl]="primaryColorFormControl"
+      [isEditMode]="isEditingColors"
+    ></app-edit-text-field>
+    <app-edit-text-field
+      type="color"
+      [label]="tr.language().SECONDARY_COLOR"
+      [placeholder]="tr.language().SECONDARY_COLOR"
+      [errors]="[{ validator: 'required', message: 'La couleur secondaire est obligatoire' }]"
+      [formControl]="secondaryColorFormControl"
+      [isEditMode]="isEditingColors"
+    ></app-edit-text-field>
+    <app-edit-text-field
+      type="color"
+      [label]="tr.language().TERTIARY_COLOR"
+      [placeholder]="tr.language().TERTIARY_COLOR"
+      [errors]="[{ validator: 'required', message: 'La couleur tertiaire est obligatoire' }]"
+      [formControl]="tertiaryColorFormControl"
+      [isEditMode]="isEditingColors"
+    ></app-edit-text-field>
+    <button mat-stroked-button color="primary" class="w-fit grid-rows-2" (click)="updateColors()">
+      {{ isEditingColors() ? tr.language().SAVE_COLORS : tr.language().EDIT_COLORS }}
+    </button>
+    @if (isEditingColors()) {
+      <p
+        class="row-start-3 flex items-center justify-center rounded-md p-2 text-center text-white"
+        [ngStyle]="{ 'background-color': primaryColorFormControl.value }"
+      >
+        {{ tr.language().PRIMARY_COLOR }}
+      </p>
+      <h2
+        class="row-start-3 flex items-center justify-center rounded-md p-2 text-center"
+        [ngStyle]="{ color: secondaryColorFormControl.value }"
+      >
+        {{ tr.language().SECONDARY_COLOR }}
+      </h2>
+      <p
+        class="row-start-3 flex items-center justify-center rounded-md p-2 text-center"
+        [ngStyle]="{ color: tertiaryColorFormControl.value }"
+      >
+        {{ tr.language().TERTIARY_COLOR }}
+      </p>
+    }
+  </div>
+
+  <div class="flex flex-col gap-4 divide-y divide-gray-200 pt-6">
+    <div class="flex items-center gap-12 self-stretch pt-6">
+      <img src="assets/icons/home_marker.svg" alt="logo" class="h-20 w-20" />
+
+      <div class="flex flex-1 flex-col gap-4">
+        <span class="text-secondary">{{ tr.language().OPERATORS_START_ADDRESS }}</span>
+
+        @if (this.settings()?.operatorStartAddress) {
+          @if (this.isEditingAddress()) {
+            <app-address [(ngModel)]="addressFormControl.value" [isEditMode]="isEditingAddress()"></app-address>
+
+            <div class="flex gap-2">
+              <button mat-stroked-button color="primary" class="w-fit" (click)="isEditingAddress.set(false)">
+                {{ tr.language().CANCEL }}
+              </button>
+              <button mat-stroked-button color="primary" class="w-fit" (click)="updateAddress()">
+                {{ tr.language().SAVE }}
+              </button>
+            </div>
+          } @else {
+            <div class="flex flex-col gap-2">
+              <p class="text-sm text-[#45556C]">{{ this.settings()?.operatorStartAddress?.street }}</p>
+              <p class="text-sm text-[#45556C]">{{ this.settings()?.operatorStartAddress?.additionalInfo }}</p>
+              <p class="text-sm text-[#45556C]">
+                {{ this.settings()?.operatorStartAddress?.city }}, {{ this.settings()?.operatorStartAddress?.country }}
+              </p>
+            </div>
+
+            <button mat-stroked-button color="primary" class="w-fit" (click)="isEditingAddress.set(true)">
+              {{ tr.language().EDIT_ADDRESS }}
+            </button>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

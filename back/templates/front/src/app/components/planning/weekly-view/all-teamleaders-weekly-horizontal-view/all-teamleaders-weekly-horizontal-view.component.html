@@ -1,0 +1,18 @@
+<div class="flex h-full w-full flex-col gap-4 overflow-x-auto overflow-y-auto">
+  <app-teamleader-weekly-horizontal-view
+    class="flex-1"
+    [showDate]="true"
+    [missions]="organizedMissionsByDays()['unaffected']"
+    [availableIds]="availableIds()"
+  ></app-teamleader-weekly-horizontal-view>
+  <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-col gap-4">
+    @for (teamleader of teamleaders(); track teamleader.id) {
+      <app-teamleader-weekly-horizontal-view
+        class="flex-1"
+        [missions]="organizedMissionsByDays()[teamleader.id!]"
+        [teamleader]="teamleader"
+        [availableIds]="availableIds()"
+      ></app-teamleader-weekly-horizontal-view>
+    }
+  </div>
+</div>

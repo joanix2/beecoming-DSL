@@ -1,0 +1,38 @@
+<div class="flex w-full flex-col justify-between gap-4 md:flex-row">
+  <div class="flex gap-4">
+    @if (showBackButton && editMode() === false) {
+      <div class="flex items-center gap-2">
+        <button mat-stroked-button type="button" class="min-width flex" (click)="onBack()">
+          {{ translateService.language().RETURN }}
+        </button>
+      </div>
+      <mat-divider class="!my-2" [vertical]="true"></mat-divider>
+    }
+    <div class="flex items-center font-semibold text-secondary">{{ title }}</div>
+  </div>
+
+  @if (isSmallScreen) {
+    <mat-divider class="w-full"></mat-divider>
+  }
+  @if (canEdit) {
+    <div class="flex items-center gap-4">
+      @if (editMode()) {
+        <button mat-stroked-button type="button" class="min-width flex" (click)="onCancel()">
+          {{ translateService.language().CANCEL }}
+        </button>
+        <button mat-flat-button [disabled]="submitDisabled()" type="submit" class="min-width flex" (click)="onSubmit()">
+          {{ translateService.language().SAVE }}
+        </button>
+      } @else {
+        @if (showArchiveButton && isArchived !== null) {
+          <button mat-stroked-button type="button" class="min-width flex" (click)="onArchiveOrUnarchive()">
+            {{ isArchived ? translateService.language().UNARCHIVE : translateService.language().ARCHIVE }}
+          </button>
+        }
+        <button mat-flat-button type="button" color="primary" class="min-width flex" (click)="onEdit()">
+          {{ translateService.language().EDIT }}
+        </button>
+      }
+    </div>
+  }
+</div>

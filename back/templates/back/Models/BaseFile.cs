@@ -1,0 +1,14 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace opteeam_api.Models
+{
+    public abstract class BaseFile<TType> : BaseModel, IHasType<TType>, IHasFile
+        where TType : BaseType
+    {
+        public Guid TypeId { get; set; }
+        [ForeignKey(nameof(TypeId))] public TType Type { get; set; }
+
+        public string FileName { get; set; }
+        public string Url { get; set; }
+    }
+}

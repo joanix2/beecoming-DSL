@@ -1,0 +1,11 @@
+mat-icon {
+  ::ng-deep {
+    svg {
+      fill: currentColor !important;
+    }
+
+    path {
+      fill: currentColor !important;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+<div class="planning-outer-container flex h-full flex-col gap-4">
+  <app-header-planning></app-header-planning>
+
+  @if (!isWeeklyViewSignal()) {
+    <app-missions-unaffected [connectedToIds]="selectedUserIdsComputed()"></app-missions-unaffected>
+  }
+  <div
+    class="w-full gap-4 overflow-x-auto"
+    (cdkDropListDropped)="reorderColumnPlanning($event)"
+    [cdkDropListData]="teamleaders()"
+    cdkDropList
+    cdkDropListOrientation="mixed"
+  >
+    @if (isWeeklyViewSignal()) {
+      <app-all-teamleaders-weekly-horizontal-view
+        [weekDate]="selectedDateSignal()"
+        [teamleaders]="teamleaders()"
+      ></app-all-teamleaders-weekly-horizontal-view>
+    } @else {
+      <div class="flex flex-row gap-4">
+        @for (user of teamleaders(); track user.id) {
+          <app-planning-column
+            [teamleader]="user"
+            [userIds]="selectedUserIdsComputed()"
+            cdkDrag
+            [cdkDragData]="user.id"
+          ></app-planning-column>
+        }
+      </div>
+    }
+  </div>
+</div>

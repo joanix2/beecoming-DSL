@@ -1,0 +1,822 @@
+[
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "AsyncIterator",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "AsyncIterator",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "BackgroundTasks",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "StreamingResponse",
+        "importPath": "fastapi.responses",
+        "description": "fastapi.responses",
+        "isExtraImport": true,
+        "detail": "fastapi.responses",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "ChatMessage",
+        "importPath": "models.chat",
+        "description": "models.chat",
+        "isExtraImport": true,
+        "detail": "models.chat",
+        "documentation": {}
+    },
+    {
+        "label": "ChatResponse",
+        "importPath": "models.chat",
+        "description": "models.chat",
+        "isExtraImport": true,
+        "detail": "models.chat",
+        "documentation": {}
+    },
+    {
+        "label": "JSONGenerationRequest",
+        "importPath": "models.chat",
+        "description": "models.chat",
+        "isExtraImport": true,
+        "detail": "models.chat",
+        "documentation": {}
+    },
+    {
+        "label": "llm_service",
+        "importPath": "services.llm_service",
+        "description": "services.llm_service",
+        "isExtraImport": true,
+        "detail": "services.llm_service",
+        "documentation": {}
+    },
+    {
+        "label": "llm_service",
+        "importPath": "services.llm_service",
+        "description": "services.llm_service",
+        "isExtraImport": true,
+        "detail": "services.llm_service",
+        "documentation": {}
+    },
+    {
+        "label": "ScaffoldingRequest",
+        "importPath": "models.scaffolding",
+        "description": "models.scaffolding",
+        "isExtraImport": true,
+        "detail": "models.scaffolding",
+        "documentation": {}
+    },
+    {
+        "label": "ScaffoldingResponse",
+        "importPath": "models.scaffolding",
+        "description": "models.scaffolding",
+        "isExtraImport": true,
+        "detail": "models.scaffolding",
+        "documentation": {}
+    },
+    {
+        "label": "scaffolding_service",
+        "importPath": "services.scaffolding_service",
+        "description": "services.scaffolding_service",
+        "isExtraImport": true,
+        "detail": "services.scaffolding_service",
+        "documentation": {}
+    },
+    {
+        "label": "ChatOpenAI",
+        "importPath": "langchain_openai",
+        "description": "langchain_openai",
+        "isExtraImport": true,
+        "detail": "langchain_openai",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain.prompts",
+        "description": "langchain.prompts",
+        "isExtraImport": true,
+        "detail": "langchain.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "StrOutputParser",
+        "importPath": "langchain.schema.output_parser",
+        "description": "langchain.schema.output_parser",
+        "isExtraImport": true,
+        "detail": "langchain.schema.output_parser",
+        "documentation": {}
+    },
+    {
+        "label": "RunnablePassthrough",
+        "importPath": "langchain.schema.runnable",
+        "description": "langchain.schema.runnable",
+        "isExtraImport": true,
+        "detail": "langchain.schema.runnable",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "template_service",
+        "importPath": "services.template_service",
+        "description": "services.template_service",
+        "isExtraImport": true,
+        "detail": "services.template_service",
+        "documentation": {}
+    },
+    {
+        "label": "UMLDiagram",
+        "importPath": "models.uml",
+        "description": "models.uml",
+        "isExtraImport": true,
+        "detail": "models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Class",
+        "importPath": "models.uml",
+        "description": "models.uml",
+        "isExtraImport": true,
+        "detail": "models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Relation",
+        "importPath": "models.uml",
+        "description": "models.uml",
+        "isExtraImport": true,
+        "detail": "models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Environment",
+        "importPath": "jinja2",
+        "description": "jinja2",
+        "isExtraImport": true,
+        "detail": "jinja2",
+        "documentation": {}
+    },
+    {
+        "label": "FileSystemLoader",
+        "importPath": "jinja2",
+        "description": "jinja2",
+        "isExtraImport": true,
+        "detail": "jinja2",
+        "documentation": {}
+    },
+    {
+        "label": "Template",
+        "importPath": "jinja2",
+        "description": "jinja2",
+        "isExtraImport": true,
+        "detail": "jinja2",
+        "documentation": {}
+    },
+    {
+        "label": "TemplateNotFound",
+        "importPath": "jinja2",
+        "description": "jinja2",
+        "isExtraImport": true,
+        "detail": "jinja2",
+        "documentation": {}
+    },
+    {
+        "label": "BaseSettings",
+        "importPath": "pydantic_settings",
+        "description": "pydantic_settings",
+        "isExtraImport": true,
+        "detail": "pydantic_settings",
+        "documentation": {}
+    },
+    {
+        "label": "CORSMiddleware",
+        "importPath": "fastapi.middleware.cors",
+        "description": "fastapi.middleware.cors",
+        "isExtraImport": true,
+        "detail": "fastapi.middleware.cors",
+        "documentation": {}
+    },
+    {
+        "label": "asynccontextmanager",
+        "importPath": "contextlib",
+        "description": "contextlib",
+        "isExtraImport": true,
+        "detail": "contextlib",
+        "documentation": {}
+    },
+    {
+        "label": "uvicorn",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "uvicorn",
+        "description": "uvicorn",
+        "detail": "uvicorn",
+        "documentation": {}
+    },
+    {
+        "label": "chat",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "scaffolding",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "ChatMessage",
+        "kind": 6,
+        "importPath": "back.models.chat",
+        "description": "back.models.chat",
+        "peekOfCode": "class ChatMessage(BaseModel):\n    \"\"\"Chat message model\"\"\"\n    message: str = Field(..., description=\"The user's message\")\n    context: Optional[Dict[str, Any]] = Field(\n        default=None,\n        description=\"Optional context for the chat\"\n    )\n    class Config:\n        json_schema_extra = {\n            \"example\": {",
+        "detail": "back.models.chat",
+        "documentation": {}
+    },
+    {
+        "label": "ChatResponse",
+        "kind": 6,
+        "importPath": "back.models.chat",
+        "description": "back.models.chat",
+        "peekOfCode": "class ChatResponse(BaseModel):\n    \"\"\"Chat response model\"\"\"\n    response: str\n    class Config:\n        json_schema_extra = {\n            \"example\": {\n                \"response\": \"To generate a REST API from your UML diagram...\"\n            }\n        }\nclass JSONGenerationRequest(BaseModel):",
+        "detail": "back.models.chat",
+        "documentation": {}
+    },
+    {
+        "label": "JSONGenerationRequest",
+        "kind": 6,
+        "importPath": "back.models.chat",
+        "description": "back.models.chat",
+        "peekOfCode": "class JSONGenerationRequest(BaseModel):\n    \"\"\"Request for JSON generation\"\"\"\n    prompt: str = Field(..., description=\"The prompt for JSON generation\")\n    context: Optional[Dict[str, Any]] = Field(\n        default=None,\n        description=\"Optional context for the generation\"\n    )\n    class Config:\n        json_schema_extra = {\n            \"example\": {",
+        "detail": "back.models.chat",
+        "documentation": {}
+    },
+    {
+        "label": "ScaffoldingRequest",
+        "kind": 6,
+        "importPath": "back.models.scaffolding",
+        "description": "back.models.scaffolding",
+        "peekOfCode": "class ScaffoldingRequest(BaseModel):\n    \"\"\"Request for code scaffolding\"\"\"\n    uml_data: Dict[str, Any] = Field(\n        ...,\n        description=\"UML diagram data with classes and relations\",\n        alias=\"umlData\"\n    )\n    language: str = Field(\n        default=\"python\",\n        description=\"Target programming language (python, typescript, csharp)\"",
+        "detail": "back.models.scaffolding",
+        "documentation": {}
+    },
+    {
+        "label": "ScaffoldingResponse",
+        "kind": 6,
+        "importPath": "back.models.scaffolding",
+        "description": "back.models.scaffolding",
+        "peekOfCode": "class ScaffoldingResponse(BaseModel):\n    \"\"\"Response from scaffolding generation\"\"\"\n    success: bool\n    language: str\n    framework: Optional[str]\n    output_path: str = Field(..., alias=\"outputPath\")\n    files: List[str]\n    llm_insights: Optional[str] = Field(default=None, alias=\"llmInsights\")\n    timestamp: str\n    class Config:",
+        "detail": "back.models.scaffolding",
+        "documentation": {}
+    },
+    {
+        "label": "VisibilityType",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class VisibilityType(str, Enum):\n    \"\"\"UML visibility types\"\"\"\n    PUBLIC = \"+\"\n    PRIVATE = \"-\"\n    PROTECTED = \"#\"\n    PACKAGE = \"~\"\nclass RelationType(str, Enum):\n    \"\"\"UML relation types\"\"\"\n    ASSOCIATION = \"association\"\n    AGGREGATION = \"aggregation\"",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "RelationType",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class RelationType(str, Enum):\n    \"\"\"UML relation types\"\"\"\n    ASSOCIATION = \"association\"\n    AGGREGATION = \"aggregation\"\n    COMPOSITION = \"composition\"\n    INHERITANCE = \"inheritance\"\n    REALIZATION = \"realization\"\n    DEPENDENCY = \"dependency\"\nclass Attribute(BaseModel):\n    \"\"\"UML Class Attribute\"\"\"",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Attribute",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class Attribute(BaseModel):\n    \"\"\"UML Class Attribute\"\"\"\n    id: str\n    visibility: str = Field(default=\"+\")\n    name: str\n    type: str = Field(default=\"String\")\n    isStatic: bool = Field(default=False)\n    defaultValue: Optional[str] = None\n    class Config:\n        json_schema_extra = {",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Method",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class Method(BaseModel):\n    \"\"\"UML Class Method\"\"\"\n    id: str\n    visibility: str = Field(default=\"+\")\n    name: str\n    returnType: str = Field(default=\"void\")\n    parameters: str = Field(default=\"\")\n    isStatic: bool = Field(default=False)\n    isAbstract: bool = Field(default=False)\n    class Config:",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Class",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class Class(BaseModel):\n    \"\"\"UML Class\"\"\"\n    id: str\n    name: str\n    isAbstract: bool = Field(default=False)\n    attributes: List[Attribute] = Field(default_factory=list)\n    methods: List[Method] = Field(default_factory=list)\n    x: float = Field(default=0.0)\n    y: float = Field(default=0.0)\n    class Config:",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "Relation",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class Relation(BaseModel):\n    \"\"\"UML Relation between classes\"\"\"\n    id: str\n    sourceId: str\n    targetId: str\n    type: RelationType\n    sourceCardinality: Optional[str] = None\n    targetCardinality: Optional[str] = None\n    label: Optional[str] = None\n    class Config:",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "UMLDiagram",
+        "kind": 6,
+        "importPath": "back.models.uml",
+        "description": "back.models.uml",
+        "peekOfCode": "class UMLDiagram(BaseModel):\n    \"\"\"Complete UML Diagram\"\"\"\n    classes: List[Class]\n    relations: List[Relation] = Field(default_factory=list)\n    class Config:\n        json_schema_extra = {\n            \"example\": {\n                \"classes\": [\n                    {\n                        \"id\": \"7990cabb-c5f1-4cdb-b238-36cfa52b7e4f\",",
+        "detail": "back.models.uml",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
+        "importPath": "back.routes.chat",
+        "description": "back.routes.chat",
+        "peekOfCode": "router = APIRouter()\n@router.post(\"/stream\")\nasync def chat_stream(message: ChatMessage):\n    \"\"\"\n    Chat endpoint with Server-Sent Events (SSE)\n    Streams the LLM response in real-time using SSE format.\n    Args:\n        message: ChatMessage with user's message and optional context\n    Returns:\n        StreamingResponse with SSE events",
+        "detail": "back.routes.chat",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
+        "importPath": "back.routes.scaffolding",
+        "description": "back.routes.scaffolding",
+        "peekOfCode": "router = APIRouter()\n@router.post(\"/generate\", response_model=ScaffoldingResponse)\nasync def generate_scaffolding(request: ScaffoldingRequest):\n    \"\"\"\n    Generate code scaffolding from UML diagram\n    Takes a UML diagram JSON and generates code in the specified language\n    and framework using Jinja templates and optionally LLM assistance.\n    Args:\n        request: ScaffoldingRequest with UML data and generation options\n    Returns:",
+        "detail": "back.routes.scaffolding",
+        "documentation": {}
+    },
+    {
+        "label": "LLMService",
+        "kind": 6,
+        "importPath": "back.services.llm_service",
+        "description": "back.services.llm_service",
+        "peekOfCode": "class LLMService:\n    \"\"\"Service for interacting with Language Models using LangChain\"\"\"\n    def __init__(self):\n        self.llm = ChatOpenAI(\n            model=settings.OPENAI_MODEL,\n            temperature=settings.OPENAI_TEMPERATURE,\n            max_tokens=settings.OPENAI_MAX_TOKENS,\n            streaming=True,\n            api_key=settings.OPENAI_API_KEY\n        )",
+        "detail": "back.services.llm_service",
+        "documentation": {}
+    },
+    {
+        "label": "llm_service",
+        "kind": 5,
+        "importPath": "back.services.llm_service",
+        "description": "back.services.llm_service",
+        "peekOfCode": "llm_service = LLMService()",
+        "detail": "back.services.llm_service",
+        "documentation": {}
+    },
+    {
+        "label": "ScaffoldingService",
+        "kind": 6,
+        "importPath": "back.services.scaffolding_service",
+        "description": "back.services.scaffolding_service",
+        "peekOfCode": "class ScaffoldingService:\n    \"\"\"Service for generating code scaffolding from UML diagrams\"\"\"\n    def __init__(self):\n        self.template_service = template_service\n        self.llm_service = llm_service\n        self.output_dir = settings.OUTPUT_DIR\n        self.output_dir.mkdir(parents=True, exist_ok=True)\n    async def generate_from_uml(\n        self, \n        uml_data: Dict[str, Any],",
+        "detail": "back.services.scaffolding_service",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "back.services.scaffolding_service",
+        "description": "back.services.scaffolding_service",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass ScaffoldingService:\n    \"\"\"Service for generating code scaffolding from UML diagrams\"\"\"\n    def __init__(self):\n        self.template_service = template_service\n        self.llm_service = llm_service\n        self.output_dir = settings.OUTPUT_DIR\n        self.output_dir.mkdir(parents=True, exist_ok=True)\n    async def generate_from_uml(\n        self, ",
+        "detail": "back.services.scaffolding_service",
+        "documentation": {}
+    },
+    {
+        "label": "scaffolding_service",
+        "kind": 5,
+        "importPath": "back.services.scaffolding_service",
+        "description": "back.services.scaffolding_service",
+        "peekOfCode": "scaffolding_service = ScaffoldingService()",
+        "detail": "back.services.scaffolding_service",
+        "documentation": {}
+    },
+    {
+        "label": "TemplateService",
+        "kind": 6,
+        "importPath": "back.services.template_service",
+        "description": "back.services.template_service",
+        "peekOfCode": "class TemplateService:\n    \"\"\"Service for managing and rendering Jinja2 templates\"\"\"\n    def __init__(self, templates_dir: Optional[Path] = None):\n        \"\"\"\n        Initialize the template service\n        Args:\n            templates_dir: Directory containing Jinja2 templates\n        \"\"\"\n        self.templates_dir = templates_dir or settings.TEMPLATES_DIR\n        self.templates_dir.mkdir(parents=True, exist_ok=True)",
+        "detail": "back.services.template_service",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "back.services.template_service",
+        "description": "back.services.template_service",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass TemplateService:\n    \"\"\"Service for managing and rendering Jinja2 templates\"\"\"\n    def __init__(self, templates_dir: Optional[Path] = None):\n        \"\"\"\n        Initialize the template service\n        Args:\n            templates_dir: Directory containing Jinja2 templates\n        \"\"\"\n        self.templates_dir = templates_dir or settings.TEMPLATES_DIR",
+        "detail": "back.services.template_service",
+        "documentation": {}
+    },
+    {
+        "label": "template_service",
+        "kind": 5,
+        "importPath": "back.services.template_service",
+        "description": "back.services.template_service",
+        "peekOfCode": "template_service = TemplateService()",
+        "detail": "back.services.template_service",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "kind": 6,
+        "importPath": "back.config",
+        "description": "back.config",
+        "peekOfCode": "class Settings(BaseSettings):\n    \"\"\"Application settings loaded from environment variables\"\"\"\n    # Application\n    APP_NAME: str = \"FastAPI Scaffolder\"\n    VERSION: str = \"1.0.0\"\n    DEBUG: bool = True\n    HOST: str = \"0.0.0.0\"\n    PORT: int = 8000\n    # CORS\n    ALLOWED_ORIGINS: List[str] = [\"http://localhost:4200\", \"http://localhost:3000\"]",
+        "detail": "back.config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "kind": 5,
+        "importPath": "back.config",
+        "description": "back.config",
+        "peekOfCode": "settings = Settings()",
+        "detail": "back.config",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "back.main",
+        "description": "back.main",
+        "peekOfCode": "app = FastAPI(\n    title=settings.APP_NAME,\n    description=\"FastAPI with LLM and Scaffolding capabilities\",\n    version=settings.VERSION,\n    lifespan=lifespan\n)\n# CORS middleware configuration\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=settings.ALLOWED_ORIGINS,",
+        "detail": "back.main",
+        "documentation": {}
+    }
+]

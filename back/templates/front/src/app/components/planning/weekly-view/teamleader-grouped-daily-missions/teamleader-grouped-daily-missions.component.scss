@@ -1,0 +1,69 @@
+// .missions-container {
+//   display: flex;
+//   width: 100%;
+//   flex: 1;
+//   gap: 0.5rem;
+//   flex-wrap: wrap;
+// }
+
+// .mission-card {
+//   height: 180px;
+//   transition: all 0.3s ease;
+// }
+
+// // Single mission - takes full width
+// .missions-container[data-count='1'] .mission-card {
+//   width: 100%;
+//   flex: 1;
+// }
+
+// // Two missions - each takes 50%
+// .missions-container[data-count='2'] .mission-card {
+//   width: calc(50% - 0.25rem);
+//   flex: 0 0 calc(50% - 0.25rem);
+// }
+
+// // Three missions - each takes 33.33%
+// .missions-container[data-count='3'] .mission-card {
+//   width: calc(33.333% - 0.334rem);
+//   flex: 0 0 calc(33.333% - 0.334rem);
+// }
+
+// // Four or more missions - 3 columns, 2 rows, smaller height
+// .missions-container[data-count='4'],
+// .missions-container[data-count='5'] {
+//   .mission-card {
+//     width: calc(33.333% - 0.334rem);
+//     flex: 0 0 calc(33.333% - 0.334rem);
+//     height: 80px;
+//   }
+// }
+
+// // More than 5 missions
+// .missions-container[data-count-more='5'] {
+//   .mission-card {
+//     width: calc(33.333% - 0.334rem);
+//     flex: 0 0 calc(33.333% - 0.334rem);
+//   }
+// }
+
+// .empty-state {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 100%;
+//   flex: 1;
+// }
+
+// .more-indicator {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: calc(33.333% - 0.334rem);
+//   flex: 0 0 calc(33.333% - 0.334rem);
+//   height: 80px;
+//   background-color: #e2e8f0;
+//   border-radius: 0.5rem;
+//   font-weight: 600;
+//   color: #64748b;
+// }

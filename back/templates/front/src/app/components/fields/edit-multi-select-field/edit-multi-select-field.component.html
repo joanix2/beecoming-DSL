@@ -1,0 +1,42 @@
+@if (formControl.value) {
+  <div class="flex flex-col gap-2">
+    <mat-label class="filed-label !text-secondary">{{ label }}</mat-label>
+
+    @if (isEditMode()) {
+      <mat-form-field class="w-full">
+        <mat-select
+          [formControl]="formControl"
+          [placeholder]="placeholder"
+          [compareWith]="compareWith"
+          [disabled]="isDisabled()"
+          multiple
+          (selectionChange)="onValueChange($event.value)"
+        >
+          <mat-select-trigger>
+            {{ renderSelectionLabels(formControl.value) }}
+          </mat-select-trigger>
+          @for (option of options; track $index) {
+            <mat-option [value]="option" [disabled]="isDisabled()">{{ option.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <app-error-message [control]="formControl" [errors]="errors"></app-error-message>
+    } @else {
+      @if (formControl.value) {
+        <mat-chip-set aria-label="selection" class="flex flex-wrap">
+          @for (chip of formControl.value; track $index) {
+            <mat-basic-chip
+              [ngStyle]="{
+                'background-color': chip.color,
+              }"
+              class="m-1 rounded-full px-2"
+              [attr.aria-label]="'remove ' + chip.id"
+            >
+              <span class="text-sm text-white">{{ chip.name }}</span>
+            </mat-basic-chip>
+          }
+        </mat-chip-set>
+      }
+    }
+  </div>
+}

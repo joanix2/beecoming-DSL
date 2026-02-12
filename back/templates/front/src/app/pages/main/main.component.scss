@@ -1,0 +1,53 @@
+.nav-bar {
+  position: absolute;
+  width: 100%;
+}
+
+img.nav-logo {
+  width: auto;
+  height: 100%;
+}
+
+.nav-bar button[mat-icon-button].rounded-full {
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-bar {
+    padding: 12px 16px;
+  }
+}
+
+mat-icon {
+  ::ng-deep {
+    svg {
+      fill: currentColor !important;
+    }
+
+    path {
+      fill: currentColor !important;
+    }
+  }
+}
+
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--custom-primary), transparent);
+  width: 30%;
+  z-index: 1000;
+  animation: loading 1s infinite linear;
+}
+
+mat-progress-bar {
+  ::ng-deep {
+    .mdc-linear-progress__buffer-bar {
+      background-color: #2670a14c !important;
+    }
+  }
+}

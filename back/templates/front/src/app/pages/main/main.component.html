@@ -1,0 +1,150 @@
+@if (loadingService.loading$ | async) {
+  <div class="absolute top-0 z-50 h-fit w-full">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+}
+
+<div
+  class="nav-bar fixed left-0 top-0 z-40 flex w-full items-center justify-between border-b-2 border-[#E2E8F0] bg-white px-4 py-2"
+>
+  <div class="flex items-center">
+    <mat-icon
+      (click)="drawer.toggle()"
+      (keydown.enter)="drawer.toggle()"
+      class="mr-4 cursor-pointer lg:!hidden"
+      svgIcon="menu"
+    ></mat-icon>
+    <img routerLink="/" alt="logo" class="nav-logo !h-8 !w-40 cursor-pointer max-lg:hidden" [src]="logo()" />
+  </div>
+
+  <div class="hidden flex-1 justify-center lg:flex">
+    <nav [tabPanel]="tabPanel" color="primary" mat-tab-nav-bar>
+      @for (link of links; track link.url) {
+        @if (!link.hidden && link.roles.includes(computedUserRole())) {
+          <a
+            [active]="activeLink() === link || (activeLink()?.url?.includes('missions') && link.url.includes('orders'))"
+            [routerLink]="link.url"
+            mat-tab-link
+          >
+            <mat-icon
+              class="z-0 mr-2"
+              [class]="activeLink() === link ? 'text-[#2670A1]' : 'text-[#45556C]'"
+              [svgIcon]="link.icon"
+            ></mat-icon>
+            <span class="font-bold" [class]="activeLink() === link ? 'text-primary' : 'text-[#45556C]'">
+              {{ tr.get(link.label) }}
+            </span>
+          </a>
+        }
+      }
+    </nav>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 divide-x-2 divide-[#E2E8F0]">
+      <button
+        class="relative"
+        #notifTrigger
+        (click)="loadNotifications()"
+        [matMenuTriggerFor]="notifMenu"
+        mat-icon-button
+      >
+        <mat-icon class="z-0" svgIcon="bell"></mat-icon>
+        <!-- @if (notificationEventSource.notificationNumber > 0) { -->
+        <span class="absolute right-[10px] top-1 z-10 h-[10px] w-[10px] rounded-full bg-primary"></span>
+        <!-- } -->
+      </button>
+
+      <div class="hidden pl-3 text-right md:block">
+        <div class="font-semibold text-gray-800">
+          {{ appService.me?.role | translateRole }} {{ appService.me?.fullName | fullNameInitial }}
+        </div>
+      </div>
+    </div>
+
+    <button
+      [matMenuTriggerFor]="menu"
+      class="flex !h-10 !w-10 !min-w-0 items-center justify-center rounded-full bg-gray-100 transition-colors duration-200 hover:bg-gray-200"
+      matMiniFab
+    >
+      <mat-icon svgIcon="user" class="!h-5 !w-5"></mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-menu #notifMenu class="notif-container p-2" xPosition="before">
+  <div (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" class="flex flex-col gap-2">
+    @if (orderedNotifications().length > 0) {
+      @for (item of orderedNotifications(); track item.id) {
+        <div class="notifMenu w-full rounded-md !bg-white !p-2 shadow-lg" mat-menu-item>
+          <div
+            class="flex flex-col justify-between gap-1 p-1"
+            (click)="redirectTo(item)"
+            (keydown.enter)="redirectTo(item)"
+          >
+            <div class="flex flex-col gap-1">
+              <p class="font-bold">{{ item.title }}</p>
+              <p class="text-sm">{{ item.message }}</p>
+            </div>
+            <p class="text-xs text-slate-500">{{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <mat-checkbox
+              (change)="markAsSeen(item)"
+              [checked]="item.seenAt"
+              class="!ml-auto"
+              matTooltipPosition="after"
+              [matTooltip]="item.seenAt ? tr.language().MARK_AS_UNSEEN : tr.language().MARK_AS_SEEN"
+              matTooltipClass="custom-tooltip"
+            ></mat-checkbox>
+            <button
+              (click)="archiveNotification(item)"
+              matTooltipClass="custom-tooltip"
+              mat-icon-button
+              matTooltipPosition="after"
+              [matTooltip]="tr.language().ARCHIVE"
+            >
+              <mat-icon
+                class="custom-color-icon text-sm"
+                [ngStyle]="{ '--custom-color': 'var(--colors-status-error)' }"
+                svgIcon="delete"
+              ></mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    } @else {
+      <p>{{ tr.language().NO_NOTIFICATION }}</p>
+    }
+  </div>
+</mat-menu>
+
+<mat-menu #menu="matMenu" class="navbar-menu">
+  <button (click)="this.logout()" mat-menu-item>
+    <mat-icon color="red" svgIcon="shut_down"></mat-icon>
+    <span>{{ tr.language().LOGOUT }}</span>
+  </button>
+</mat-menu>
+
+<mat-drawer-container class="drawer-container h-screen">
+  <mat-drawer #drawer class="w-64" mode="over">
+    <div class="flex flex-col p-2 pt-20">
+      <button
+        (click)="drawer.toggle()"
+        *ngFor="let link of links; let i = index"
+        [ngClass]="activeLink() === link ? 'active' : ''"
+        [routerLink]="link.url"
+        class="button-nav"
+        mat-button
+      >
+        {{ tr.get(link.label) }}
+      </button>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content class="!h-screen !overflow-hidden">
+    <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    <div [ngClass]="hasBackground() ? 'background' : ''" class="h-full w-screen overflow-auto bg-[#FCFCFC] p-8 pt-24">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

@@ -1,0 +1,14 @@
+.wizard {
+  height: 85vh;
+  width: 95vw;
+  box-shadow: 0px 0px 16px 0px #0154a01f;
+  border-radius: 16px;
+}
+
+@screen lg {
+  .wizard {
+    height: 80vh;
+    width: 85vw;
+    border-radius: 32px;
+  }
+}

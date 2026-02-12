@@ -1,0 +1,17 @@
+<div class="title" mat-dialog-title>{{ translateService.language().DISCLAIMER }}</div>
+<div>
+  <div class="content" mat-dialog-content>
+
+    <div class="richtext" [innerHTML]="sanitize(richTextContent)"></div>
+  </div>
+  <div class="footer" mat-dialog-actions>
+    <div class="actions">
+      <button (click)="onCancel()" class="danger" mat-button
+              type="submit">{{ translateService.language().WIZARD_MODAL_CANCEL_BUTTON }}
+      </button>
+      <button (click)="onSubmit()" class="primary"
+              type="submit">{{ translateService.language().WIZARD_CONTINUE }}
+      </button>
+    </div>
+  </div>
+</div>

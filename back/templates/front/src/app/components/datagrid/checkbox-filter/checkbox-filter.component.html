@@ -1,0 +1,25 @@
+<div class="filter-container flex flex-col gap-2 m-3 min-w-28">
+  @if (params.displaySearchBar) {
+    <input [formControl]="searchControl" [placeholder]="translateService.language().SEARCH" />
+  }
+  <mat-checkbox (change)="onSelectAllChange($event)" [checked]="areAllSelected()" [indeterminate]="partiallyComplete()">
+    {{ translateService.language().ALL }}
+  </mat-checkbox>
+  <mat-checkbox
+    (change)="onCheckboxChange($event, value.value)"
+    *ngFor="let value of values"
+    [checked]="selectedValues.has(value.value)">
+    <span [ngClass]="{'text-white': value.color || false}" [style.background-color]="value.color || 'transparent'"
+          class="rounded-full p-2 flex gap-2 items-center h-8">
+      @if (value.icon) {
+        <mat-icon class="custom-color-icon" [ngStyle]="{'--custom-color': 'white'}" [svgIcon]="value.icon"></mat-icon>
+      }
+      {{ translateService.get(value.label.toUpperCase()) }}
+    </span>
+  </mat-checkbox>
+  @if (values.length < elementFetchCount) {
+    <button (click)="seeMore()" (keydown.enter)="seeMore()" type="submit" class="tertiary">
+      {{ translateService.language().SEE_MORE }}
+    </button>
+  }
+</div>

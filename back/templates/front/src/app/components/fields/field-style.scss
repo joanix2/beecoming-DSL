@@ -1,0 +1,12 @@
+.filed-label {
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.filed-readonly-container {
+  display: flex;
+  min-height: 50px;
+  padding-bottom: 0.5rem;
+  align-items: center;
+}

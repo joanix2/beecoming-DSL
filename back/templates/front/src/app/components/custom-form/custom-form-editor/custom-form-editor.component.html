@@ -1,0 +1,263 @@
+<div class="flex w-full flex-col gap-4 rounded-md border border-solid border-slate-200 bg-white p-4">
+  <div class="flex items-center gap-2">
+    <h2 class="font-semibold">{{ formTitle }}</h2>
+    <mat-icon [matTooltip]="titleTooltipContent" matTooltipClass="custom-tooltip" svgIcon="info"></mat-icon>
+  </div>
+  <div class="flex gap-2">
+    <div class="grow basis-1/2">
+      <div class="flex min-h-12 flex-col gap-2 rounded bg-white">
+        @for (section of customFormStructureSignal()?.sections; track section; let sectionIdx = $index) {
+          <div
+            [id]="section.id ?? ''"
+            cdkDropList
+            [cdkDropListData]="section.fields"
+            cdkDropListConnectedTo="fieldTypeList"
+            (cdkDropListDropped)="drop($event)"
+            class="flex min-h-12 flex-col gap-2 rounded border border-solid border-slate-200 bg-slate-50"
+          >
+            <div>
+              <div
+                class="flex h-12 cursor-pointer items-center justify-between p-4"
+                (click)="editSection($event, sectionIdx)"
+                (keydown.enter)="editSection($event, sectionIdx)"
+                [ngClass]="{ '': editedSectionIndex() === sectionIdx }"
+              >
+                <p>{{ section.name }}</p>
+                <div class="flex gap-2">
+                  @if (editedSectionIndex() === sectionIdx && editMode()) {
+                    <button
+                      class="flex items-center justify-center rounded-md bg-[--colors-status-success] p-1 text-white"
+                      (click)="editSection($event, sectionIdx)"
+                    >
+                      <mat-icon class="category-icon" svgIcon="accepted"></mat-icon>
+                    </button>
+                  } @else {
+                    @if (editMode()) {
+                      <button class="flex items-center justify-center p-1" (click)="editSection($event, sectionIdx)">
+                        <mat-icon svgIcon="edit"></mat-icon>
+                      </button>
+                    } @else {
+                      <button
+                        class="flex items-center justify-center p-1 transition-all"
+                        [ngClass]="editedSectionIndex() === sectionIdx ? '' : '-rotate-90'"
+                        (click)="editSection($event, sectionIdx)"
+                      >
+                        <mat-icon svgIcon="down"></mat-icon>
+                      </button>
+                    }
+                  }
+                </div>
+              </div>
+              <div class="dropdown bg-slate-200" [ngClass]="editedSectionIndex() === sectionIdx ? '' : 'hide'">
+                <div class="inner">
+                  @if (editMode()) {
+                    <div class="flex w-1/2 flex-col justify-between p-2">
+                      <mat-label class="label--form">{{ this.translateService.language().SECTION_NAME }}</mat-label>
+                      <input matInput type="text" [(ngModel)]="section.name" [disabled]="!editMode()" />
+                    </div>
+                  }
+                  @if (emptyOrAllFieldsDeleted(section) && editMode()) {
+                    <!-- Affichez une zone d'édition si la section est vide -->
+                    <div class="flex w-full flex-col justify-between p-2">
+                      <div
+                        class="flex h-14 items-center justify-between gap-3 rounded-md border-2 border-dashed border-slate-400 bg-white p-4 pl-8"
+                      >
+                        <p>{{ this.translateService.language().INVITE_DRAG_DROP }}</p>
+                      </div>
+                    </div>
+                  } @else if (emptyOrAllFieldsDeleted(section)) {
+                    <!-- Affichez une zone vide si la section est vide -->
+                    <div class="flex w-full flex-col justify-between p-2">
+                      <div class="flex h-14 items-center justify-between gap-3 rounded-md bg-white p-4 pl-8">
+                        <p>{{ this.translateService.language().NO_FIELDS }}</p>
+                      </div>
+                    </div>
+                  } @else {
+                    @for (field of section.fields; track field; let fieldIdx = $index) {
+                      @if (!field.isDeleted) {
+                        <div class="flex w-full flex-col justify-between p-2" cdkDrag [cdkDragDisabled]="!editMode()">
+                          <div
+                            [ngStyle]="{ '--custom-color': fieldTypeDefinition[field.type].color }"
+                            (click)="editField($event, fieldIdx)"
+                            (keydown.enter)="editField($event, fieldIdx)"
+                            class="custom-border flex h-14 items-center justify-between gap-3 rounded-md bg-white p-4 pl-8"
+                            [ngClass]="editedFieldIndex() === fieldIdx ? 'rounded-t-md' : 'rounded-md'"
+                          >
+                            <div class="flex items-center gap-3">
+                              <mat-icon
+                                class="custom-color-icon"
+                                [ngStyle]="{ '--custom-color': fieldTypeDefinition[field.type].color }"
+                                [svgIcon]="fieldTypeDefinition[field.type].icon"
+                              ></mat-icon>
+                              <p>{{ field.label }}</p>
+                            </div>
+                            <div class="flex gap-2">
+                              @if (editedFieldIndex() === fieldIdx && editMode()) {
+                                <button
+                                  class="flex items-center justify-center rounded-md bg-[--colors-status-error] p-1 text-white"
+                                  (click)="removeField(field)"
+                                >
+                                  <mat-icon class="category-icon" svgIcon="delete"></mat-icon>
+                                </button>
+                                <button
+                                  class="flex items-center justify-center rounded-md bg-[--colors-status-success] p-1 text-white"
+                                  (click)="editField($event, fieldIdx)"
+                                >
+                                  <mat-icon class="category-icon" svgIcon="accepted"></mat-icon>
+                                </button>
+                              } @else {
+                                @if (editMode()) {
+                                  <button
+                                    class="flex items-center justify-center p-1"
+                                    (click)="editField($event, fieldIdx)"
+                                  >
+                                    <mat-icon svgIcon="edit"></mat-icon>
+                                  </button>
+                                } @else {
+                                  <button
+                                    class="flex items-center justify-center p-1 transition-all"
+                                    [ngClass]="editedFieldIndex() === fieldIdx ? '' : '-rotate-90'"
+                                    (click)="editField($event, fieldIdx)"
+                                  >
+                                    <mat-icon svgIcon="down"></mat-icon>
+                                  </button>
+                                }
+                              }
+                            </div>
+                          </div>
+                          <div
+                            class="dropdown rounded-b-md bg-slate-100"
+                            [ngClass]="editedFieldIndex() === fieldIdx ? 'p-3' : 'hide'"
+                          >
+                            <div class="inner flex flex-col items-start">
+                              <mat-label class="label--form">{{ this.translateService.language().LABEL }}</mat-label>
+                              <div class="mb-2 flex w-full items-center justify-between">
+                                <input
+                                  [disabled]="!editMode()"
+                                  matInput
+                                  type="text"
+                                  class="w-1/2"
+                                  [placeholder]="translateService.get(field.type)"
+                                  [(ngModel)]="field.label"
+                                />
+                                <div class="flex w-1/2 flex-wrap justify-end gap-2">
+                                  <mat-checkbox
+                                    [disabled]="!editMode()"
+                                    class="flex items-center"
+                                    [checked]="field.isRequired"
+                                    [(ngModel)]="field.isRequired"
+                                  >
+                                    <p class="text-xs">{{ this.translateService.language().FIELD_REQUIRED }}</p>
+                                  </mat-checkbox>
+                                  <mat-checkbox
+                                    [disabled]="!editMode()"
+                                    class="flex items-center"
+                                    [checked]="field.isReadOnly"
+                                    [(ngModel)]="field.isReadOnly"
+                                  >
+                                    <p class="text-xs">{{ this.translateService.language().READONLY_MODE }}</p>
+                                  </mat-checkbox>
+                                </div>
+                              </div>
+                              @if (field.options && editMode() && typeWithOption(field.type)) {
+                                <div class="mb-2 flex w-full flex-col gap-2">
+                                  <p class="label--form">{{ this.translateService.language().ADD_OPTION }}</p>
+                                  <div class="flex w-full items-center gap-2">
+                                    <input
+                                      matInput
+                                      type="text"
+                                      class="w-1/2"
+                                      [(ngModel)]="optionValue"
+                                      [placeholder]="this.translateService.language().NEW_OPTION"
+                                    />
+                                    <button
+                                      class="flex items-center justify-center p-1 text-white"
+                                      (click)="addOption(field)"
+                                    >
+                                      <mat-icon svgIcon="add"></mat-icon>
+                                    </button>
+                                  </div>
+                                </div>
+                              } @else if (field.options && typeWithOption(field.type)) {
+                                <div class="flex w-full flex-col gap-2">
+                                  <p class="label--form">{{ this.translateService.language().OPTIONS }}</p>
+                                </div>
+                              }
+                              <div
+                                class="flex w-full flex-col gap-2"
+                                cdkDropList
+                                [cdkDropListData]="field.options"
+                                (cdkDropListDropped)="dropOption($event)"
+                              >
+                                @for (option of field.options; track option; let optionIdx = $index) {
+                                  @if (!option.isDeleted) {
+                                    <div class="flex w-full items-center gap-2" cdkDrag>
+                                      <input
+                                        matInput
+                                        [disabled]="!editMode()"
+                                        type="text"
+                                        class="w-1/2"
+                                        [placeholder]="option.label ?? ''"
+                                        [(ngModel)]="option.label"
+                                      />
+                                      @if (editMode()) {
+                                        <button
+                                          class="flex items-center justify-center rounded-md bg-[--colors-status-error] p-1 text-white"
+                                          (click)="removeOption(field, option)"
+                                        >
+                                          <mat-icon class="category-icon" svgIcon="delete"></mat-icon>
+                                        </button>
+                                      }
+                                    </div>
+                                  }
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    @if (editMode()) {
+      <div class="flex grow basis-1/2 flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <h2>{{ translateService.language().FIELD_TYPE }}</h2>
+          <button (click)="addSection()" type="submit" class="tertiary">
+            {{ translateService.language().ADD_SECTION }}
+          </button>
+        </div>
+        <div
+          cdkDropList
+          id="fieldTypeList"
+          [cdkDropListData]="orderedFieldType"
+          [cdkDropListConnectedTo]="dropSectionIdSignal()"
+          class="flex flex-wrap gap-2 rounded-xl border border-solid border-slate-50 bg-slate-100 p-3"
+        >
+          @for (item of orderedFieldType; track item) {
+            <button
+              [cdkDragData]="item.key"
+              (click)="addField(item.key)"
+              [ngStyle]="{ '--custom-color': item.color }"
+              class="custom-border max-w flex h-14 flex-grow basis-[49%] items-center gap-3 rounded-md bg-white p-4 pl-8"
+              cdkDrag
+            >
+              <mat-icon
+                class="custom-color-icon"
+                [ngStyle]="{ '--custom-color': item.color }"
+                [svgIcon]="item.icon"
+              ></mat-icon>
+              <p>{{ translateService.get(item.key) }}</p>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

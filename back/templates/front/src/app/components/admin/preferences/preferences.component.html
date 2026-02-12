@@ -1,0 +1,64 @@
+<span class="flex items-center gap-2 text-lg font-bold">
+  <mat-icon svgIcon="setting"></mat-icon>
+  {{ tr.language().PREFERENCES }}
+</span>
+
+<div class="flex flex-col gap-4 divide-y divide-gray-200 pt-6">
+  <div class="flex items-center gap-12 self-stretch">
+    <img src="assets/icons/planning.svg" alt="logo" class="h-20 w-20" />
+
+    <div class="flex flex-1 flex-col gap-4">
+      <span class="font-semibold text-secondary">{{ tr.language().DEFAULT_PLANNING_MODE }}</span>
+      <mat-radio-group
+        aria-label="Select an option"
+        [value]="defaultPlanningMode()"
+        (change)="changePlanningMode($event)"
+      >
+        <mat-radio-button value="daily">{{ tr.language().PLANNING_DAILY }}</mat-radio-button>
+        <mat-radio-button value="weekly">{{ tr.language().PLANNING_WEEKLY }}</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-12 self-stretch pt-6">
+    <img src="assets/icons/openning.svg" alt="logo" class="h-20 w-20" />
+
+    <div class="flex flex-1 flex-col gap-4">
+      <span class="font-semibold text-secondary">{{ tr.language().PLANNING_SHOW_WEEKEND }}</span>
+      <app-switch-button
+        [isChecked]="showWeekendsInPlanning()"
+        [leftSwitchWord]="tr.language().PLANNING_WORKING_DAYS"
+        [rightSwitchWord]="tr.language().PLANNING_ALL_WEEK_DAYS"
+        (onToggleChange)="changePlanningShowWeekend($event)"
+      ></app-switch-button>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-12 self-stretch pt-6">
+    <img src="assets/icons/week-end-1.svg" alt="logo" class="h-20 w-20" />
+
+    <div class="flex flex-1 flex-col gap-4">
+      <span class="font-semibold text-secondary">{{ tr.language().PLANNING_SHOW_FINISHED_MISSIONS }}</span>
+      <app-switch-button
+        [isChecked]="grayOutFinishedMissions()"
+        [leftSwitchWord]="''"
+        [rightSwitchWord]="tr.language().PLANNING_SHOW_FINISHED_MISSIONS_MUTED"
+        (onToggleChange)="changePlanningShowFinishedMissions($event)"
+      ></app-switch-button>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-12 self-stretch pt-6">
+    <img src="assets/icons/week-end.svg" alt="logo" class="h-20 w-20" />
+
+    <div class="flex flex-1 flex-col gap-4">
+      <span class="font-semibold text-secondary">{{ tr.language().PLANNING_MISSIONS_AS_APPOINTMENT }}</span>
+      <app-switch-button
+        [isChecked]="missionAsAppointment()"
+        [leftSwitchWord]="''"
+        [rightSwitchWord]="tr.language().PLANNING_MISSIONS_AS_APPOINTMENT_DESCRIPTION"
+        (onToggleChange)="changePlanningMissionsAsAppointment($event)"
+      ></app-switch-button>
+    </div>
+  </div>
+</div>

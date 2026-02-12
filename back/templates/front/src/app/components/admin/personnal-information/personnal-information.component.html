@@ -1,0 +1,83 @@
+<div class="flex flex-col gap-6">
+  <!-- Header with title and edit button -->
+  <div class="flex items-center justify-between">
+    <span class="flex items-center gap-2 text-lg font-bold">
+      <mat-icon svgIcon="info"></mat-icon>
+      {{ tr.language().PERSONNAL_INFORMATION }}
+    </span>
+
+    @if (!isEditMode()) {
+      <button mat-raised-button color="primary" (click)="enableEditMode()" type="button">
+        <mat-icon>edit</mat-icon>
+        Modifier
+      </button>
+    }
+  </div>
+
+  <!-- Form -->
+  @if (user()) {
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <!-- Firstname field -->
+      <app-edit-text-field
+        [formControl]="firstnameControl"
+        [isEditMode]="isEditMode"
+        [isDisabled]="isSubmitting"
+        label="Prénom"
+        placeholder="Entrez votre prénom"
+        [errors]="[{ validator: 'required', message: 'Le prénom est obligatoire' }]"
+      ></app-edit-text-field>
+
+      <!-- Lastname field -->
+      <app-edit-text-field
+        [formControl]="lastnameControl"
+        [isEditMode]="isEditMode"
+        [isDisabled]="isSubmitting"
+        label="Nom"
+        placeholder="Entrez votre nom"
+        [errors]="[{ validator: 'required', message: 'Le nom est obligatoire' }]"
+      ></app-edit-text-field>
+
+      <!-- Email field -->
+      <app-edit-text-field
+        [formControl]="emailControl"
+        [isEditMode]="isEditMode"
+        [isDisabled]="isSubmitting"
+        label="Email"
+        placeholder="Entrez votre email"
+        [errors]="[
+          { validator: 'required', message: 'L\'email est obligatoire' },
+          { validator: 'email', message: 'L\'email doit être valide' },
+        ]"
+      ></app-edit-text-field>
+
+      <!-- Phone number field -->
+      <app-edit-text-field
+        [formControl]="phoneNumberControl"
+        [isEditMode]="isEditMode"
+        [isDisabled]="isSubmitting"
+        label="Numéro de téléphone"
+        placeholder="Entrez votre numéro de téléphone"
+        [errors]="[{ validator: 'required', message: 'Le numéro de téléphone est obligatoire' }]"
+      ></app-edit-text-field>
+
+      <!-- Action buttons (only visible in edit mode) -->
+      @if (isEditMode()) {
+        <div class="col-span-full mt-4 flex gap-4">
+          <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting() || profileForm.invalid">
+            @if (isSubmitting()) {
+              Sauvegarde...
+            } @else {
+              Sauvegarder
+            }
+          </button>
+
+          <button mat-stroked-button type="button" (click)="cancelEdit()" [disabled]="isSubmitting()">Annuler</button>
+        </div>
+      }
+    </form>
+  } @else {
+    <div class="flex items-center justify-center p-8">
+      <p>Chargement du profil...</p>
+    </div>
+  }
+</div>

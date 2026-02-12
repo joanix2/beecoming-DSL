@@ -1,0 +1,26 @@
+<div class="flex flex-col gap-2">
+  <mat-label class="filed-label !text-secondary">{{ label }}</mat-label>
+
+  @if (isEditMode()) {
+    <mat-form-field class="w-full">
+      <label for="textInput" class="sr-only">{{ placeholder }}</label>
+      <input
+        id="textInput"
+        matInput
+        [type]="type"
+        [formControl]="formControl"
+        [placeholder]="placeholder"
+        [title]="placeholder"
+        [disabled]="isDisabled()"
+      />
+    </mat-form-field>
+    <app-error-message [control]="formControl" [errors]="errors"></app-error-message>
+  } @else {
+    <p class="flex items-center gap-2" [ngClass]="nowrap ? 'whitespace-nowrap' : ''">
+      @if (type === 'color') {
+        <div class="h-6 w-6 rounded border border-gray-300" [style.background-color]="formControl.value"></div>
+      }
+      {{ formControl.value }}
+    </p>
+  }
+</div>

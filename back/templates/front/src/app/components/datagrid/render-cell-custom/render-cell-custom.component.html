@@ -1,0 +1,18 @@
+@if (column.cellRenderer) {
+  @switch (column.cellRenderer) {
+    @case ('ChipComponent') {
+      <app-chip [value]="getChipLabel()" [color]="getChipColor()"></app-chip>
+    }
+    @case ('IconCellComponent') {
+      <app-icon-cell [params]="getIconCellParams()"></app-icon-cell>
+    }
+    @case ('LinkCellComponent') {
+      <app-link-cell [link]="getLinkCellValue()" [label]="getLinkCellLabel()"></app-link-cell>
+    }
+    @default {
+      <div matTooltipPosition="after" [matTooltip]="getFormattedValue()" [innerHTML]="getCellRendererContent()"></div>
+    }
+  }
+} @else {
+  <div matTooltipPosition="after" [matTooltip]="getFormattedValue()" class="truncate">{{ getFormattedValue() }}</div>
+}

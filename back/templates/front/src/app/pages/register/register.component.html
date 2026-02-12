@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="left">
+    <img alt="Logo" class="logo" src="../../../assets/logos/logo.svg" />
+  </div>
+  <div class="right">
+    <div class="empty"></div>
+    <div class="form">
+      <img alt="Logo" class="logo" src="../../../assets/logos/groupe.svg" />
+      <form (ngSubmit)="onSubmit()" [formGroup]="registerForm" novalidate>
+        <div>
+          <label for="firstname">First Name</label>
+          <input formControlName="firstname" id="firstname" />
+          <div *ngIf="registerForm.get('firstname')?.invalid && registerForm.get('firstname')?.touched">
+            First name is required.
+          </div>
+        </div>
+
+        <div>
+          <label for="lastname">Last Name</label>
+          <input formControlName="lastname" id="lastname" />
+          <div *ngIf="registerForm.get('lastname')?.invalid && registerForm.get('lastname')?.touched">
+            Last name is required.
+          </div>
+        </div>
+
+        <div>
+          <label for="email">Email</label>
+          <input formControlName="email" id="email" type="email" />
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</div>
+            <div *ngIf="registerForm.get('email')?.errors?.['email']">Invalid email format.</div>
+          </div>
+        </div>
+        <div>
+          <!--          <label for="role">Role</label>-->
+          <!--          <mat-select [multiple]="true" formControlName="roleIds" id="role" required>-->
+          <!--            <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>-->
+          <!--          </mat-select>-->
+        </div>
+
+        <div>
+          <label for="password">Password</label>
+          <div class="password-container">
+            <input
+              [placeholder]="PASSWORD_STARS"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              id="password"
+              required
+            />
+            <mat-icon
+              (click)="showPassword = !showPassword"
+              (keydown.enter)="showPassword = !showPassword"
+              [svgIcon]="showPassword ? 'show' : 'hide'"
+              class="password-icon"
+            ></mat-icon>
+          </div>
+          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            Password is required.
+          </div>
+        </div>
+
+        <div>
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="password-container">
+            <input
+              [placeholder]="PASSWORD_STARS"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              id="confirmPassword"
+              required
+              type="password"
+            />
+            <mat-icon
+              (click)="showPassword = !showPassword"
+              (keydown.enter)="showPassword = !showPassword"
+              [svgIcon]="showPassword ? 'show' : 'hide'"
+              class="password-icon"
+            ></mat-icon>
+          </div>
+          <div *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched">
+            Passwords must match.
+          </div>
+        </div>
+        <button [disabled]="registerForm.invalid" type="submit">Register</button>
+        <a href="/login">Retour vers la connexion</a>
+      </form>
+    </div>
+    <div>
+      <div class="text-center">{{ APP_VERSION }} - {{ APP_DATE }}</div>
+    </div>
+  </div>
+</div>

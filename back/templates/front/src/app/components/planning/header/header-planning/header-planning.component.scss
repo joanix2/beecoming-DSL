@@ -1,0 +1,16 @@
+mat-icon {
+  ::ng-deep {
+    svg {
+      fill: currentColor;
+    }
+
+    path {
+      fill: currentColor;
+    }
+  }
+}
+
+.mat-mdc-icon-button .mdc-button__label,
+.mat-mdc-icon-button .mat-icon {
+  color: var(--custom-secondary) !important;
+}

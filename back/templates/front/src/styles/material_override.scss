@@ -1,0 +1,187 @@
+@use 'sass:map';
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+mat-select:not(mat-form-field mat-select) {
+  @apply rounded border border-gray-300 p-3;
+}
+
+.mat-mdc-select-disabled {
+  @apply border-none;
+  color: var(--mat-select-enabled-trigger-text-color) !important;
+  padding-left: 0;
+
+  .mat-mdc-select-arrow-wrapper {
+    display: none !important;
+  }
+
+  .mat-mdc-select-arrow {
+    display: none !important;
+  }
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled):not(.mat-mdc-option-multiple) {
+  background-color: transparent !important;
+}
+
+.mat-mdc-input-element {
+  border-radius: 6px !important;
+  border: 1px solid #cbd5e1 !important;
+
+  // change the placeholder text weight
+  &::placeholder {
+    font-weight: 500 !important;
+  }
+}
+
+mat-form-field .mdc-text-field--outlined {
+  border-radius: 6px !important;
+  border: 1px solid #cbd5e1 !important;
+
+  // change the placeholder text weight
+  &::placeholder {
+    font-weight: 500 !important;
+  }
+}
+
+mat-form-field {
+  & input::placeholder {
+    color: #94a3b8 !important;
+  }
+}
+
+.mat-focused {
+  border-color: #2670a1 !important;
+}
+
+.mat-mdc-input-element:disabled {
+  background-color: unset;
+  border: none;
+  // padding-left: 0;
+}
+
+.notifMenu {
+  padding: 0 !important;
+
+  .mat-mdc-menu-item-text {
+    display: flex;
+    padding: 8px 16px;
+    justify-content: space-between;
+  }
+}
+
+.notifMenu:hover {
+  background-color: var(--custom-primary-card) !important;
+}
+
+.custom-tooltip {
+  @include mat.tooltip-overrides(
+    (
+      supporting-text-size: 12px,
+      container-color: black,
+      supporting-text-color: white,
+    )
+  );
+}
+
+.notif-container {
+  min-width: 600px !important;
+  background-color: #eff5f8c8 !important;
+  max-height: 60vh !important;
+  overflow: auto !important;
+
+  .mat-mdc-menu-content {
+    height: 100%;
+  }
+
+  ::ng-deep.mat-menu-panel {
+    max-width: fit-content !important;
+  }
+}
+
+.label {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #64748b;
+
+  &--form {
+    font-size: 12px;
+    color: #1a1918;
+    font-weight: 500;
+  }
+}
+
+mat-form-field .mdc-text-field--outlined {
+  padding: 0px 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-form-field .mat-mdc-form-field-error-wrapper {
+  padding: 0;
+}
+
+.mat-mdc-form-field-hint-wrapper {
+  padding: 0 !important;
+}
+
+// :root {
+//   @include mat.form-field-overrides(
+//     (
+//       container-height: 48px !important,
+//       container-vertical-padding: 12px !important,
+//     )
+//   );
+// }
+
+.mat-divider {
+  border-top-color: #e2e8f0 !important;
+}
+
+.mat-mdc-option {
+  padding: 8px 16px !important;
+}
+
+@media (max-width: 767px) {
+  .mat-mdc-dialog-title {
+    padding: 12px !important;
+    font-weight: bold !important;
+  }
+  .mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+    padding: 6px 12px !important;
+  }
+  .mat-mdc-dialog-surface {
+    padding: 12px !important;
+  }
+  .mat-mdc-dialog-actions {
+    padding: 8px 12px !important;
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+}
+
+div.mat-mdc-autocomplete-panel,
+div.mat-mdc-select-panel {
+  background-color: #f1f3f6 !important;
+}
+.mat-mdc-tab-label-container {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.mat-datepicker-content {
+  background-color: #f1f3f6 !important;
+}
+
+.mat-mdc-tooltip-surface {
+  border-radius: 6px !important;
+  font-size: 14px !important;
+}

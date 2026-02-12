@@ -1,0 +1,41 @@
+﻿namespace opteeam_api.Utils
+{
+    public class EnvironmentVariables
+    {
+        public static string ENVIRONMENT => Environment.GetEnvironmentVariable("ENVIRONMENT") ?? "dev";
+        public static string FRONT_URL => Environment.GetEnvironmentVariable("FRONT_URL") ?? "";
+        public static string BACK_URL => Environment.GetEnvironmentVariable("BACK_URL") ?? "https://localhost:7102";
+        
+        public static string POSTGRES_HOST => Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "";
+        public static string POSTGRES_DB => Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "";
+        public static string POSTGRES_USER => Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "";
+        public static string POSTGRES_PASSWORD => Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "";
+        public static string POSTGRES_PORT => Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
+        public static string CONNECTION_STRING = $"Server={EnvironmentVariables.POSTGRES_HOST};Port={EnvironmentVariables.POSTGRES_PORT};Database={EnvironmentVariables.POSTGRES_DB};User Id={EnvironmentVariables.POSTGRES_USER};Password={EnvironmentVariables.POSTGRES_PASSWORD};Include Error Detail=true";
+
+        public static string SMTP_HOST => Environment.GetEnvironmentVariable("SMTP_HOST") ?? "";
+        public static string SMTP_FROM => Environment.GetEnvironmentVariable("SMTP_FROM") ?? "";
+        public static string SMTP_USERNAME => Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? "";
+        public static string SMTP_PASSWORD => Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? "";
+        public static string SMTP_PORT => Environment.GetEnvironmentVariable("SMTP_PORT") ?? "25";
+
+        public static string JWT_KEY => Environment.GetEnvironmentVariable("JWT_KEY") ?? "";
+        public static string JWT_ISSUER => Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "";
+        public static string JWT_AUDIENCE => Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "";
+
+        public static string MINIO_URL => Environment.GetEnvironmentVariable("MINIO_URL") ?? "";
+        public static string MINIO_ACCESSKEY => Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? "";
+        public static string MINIO_SECRETKEY => Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? "";
+        public static string MINIO_BUCKETNAME => Environment.GetEnvironmentVariable("MINIO_BUCKETNAME") ?? "";
+        
+        public static string DATA_IMPORT_CRON_EXPRESSION => Environment.GetEnvironmentVariable("DATA_IMPORT_CRON_EXPRESSION") ?? "0 6 * * *";
+        public static string DATA_IMPORT_FILE_NAME => Environment.GetEnvironmentVariable("DATA_IMPORT_FILE_NAME") ?? "data.csv";
+        public static string DATA_IMPORT_FILE_PATH => Environment.GetEnvironmentVariable("DATA_IMPORT_FILE_PATH") ?? "/tmp/data.csv";
+        public static string[] DATA_IMPORT_EMAIL_FOR_COPY => Environment.GetEnvironmentVariable("DATA_IMPORT_EMAIL_FOR_COPY")?.Trim().Split(";") ?? [];
+        public static string DATA_IMPORT_BACKUP_PATH => Environment.GetEnvironmentVariable("DATA_IMPORT_BACKUP_PATH") ?? "/tmp/backup";
+        public static string[] DATA_IMPORT_HEADERS => Environment.GetEnvironmentVariable("DATA_IMPORT_HEADERS")?.Trim().Split(";") ?? [];
+
+        // Geolocalisation
+        public static string GEOAPIFY_KEY => Environment.GetEnvironmentVariable("GEOAPIFY_KEY") ?? "";
+    }
+}

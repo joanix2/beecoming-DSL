@@ -1,0 +1,24 @@
+@if (mission()) {
+  <div
+    class="w-full gap-2 rounded rounded-lg border-2 bg-white p-3 shadow-sm"
+    [ngStyle]="{ height: height() + 'px', width: width() + 'px', border: '2px solid' + mission()?.status?.color }"
+  >
+    <!-- body -->
+    <div class="flex flex-col gap-1">
+      <h2
+        class="text-truncate-single-line cursor-pointer text-[10px] font-medium underline"
+        [routerLink]="['/missions', mission().id]"
+      >
+        {{ mission().name }}
+      </h2>
+      <div class="flex items-center gap-1">
+        <mat-icon
+          [svgIcon]="mission().type?.icon ?? ''"
+          class="aspect-square !size-4"
+          [style.color]="mission().type?.color ?? 'red'"
+        />
+        <p class="text-truncate-single-line text-[10px]">{{ mission().type?.name | uppercase }}</p>
+      </div>
+    </div>
+  </div>
+}

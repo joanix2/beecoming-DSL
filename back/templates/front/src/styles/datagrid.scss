@@ -1,0 +1,82 @@
+.ag-cell-label-container {
+  @apply gap-2;
+  justify-content: space-between !important;
+  --ag-accent-color: #{$primary};
+}
+
+.ag-header-cell-label {
+  flex-direction: row;
+  gap: 0 !important;
+}
+
+.grid-container {
+  height: calc(100% - 50px);
+}
+.ag-header-container {
+  background-color: #e6f3fc !important;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+  border: none;
+}
+
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__leading {
+  border: none;
+}
+
+.search-input {
+  .mat-pseudo-checkbox {
+    @apply m-0 hidden w-0;
+  }
+}
+
+.ag-cell-focus,
+.ag-cell-inline-editing {
+  outline: none !important;
+  border: none !important;
+}
+
+.custom-filters {
+  .hidden {
+    display: block !important;
+  }
+
+  .ag-body,
+  .ag-overlay {
+    display: none;
+  }
+
+  .ag-header {
+    height: 250px !important;
+  }
+
+  /* Cibler le conteneur global des en-têtes de colonnes */
+  .ag-header-container {
+    display: flex;
+    flex-direction: column; /* Empiler tous les en-têtes */
+  }
+
+  /* Cibler la ligne des en-têtes de colonnes */
+  .ag-header-row {
+    display: flex;
+    flex-direction: column; /* Changer l'orientation pour avoir les en-têtes sous forme de colonne */
+    height: 100% !important;
+  }
+
+  /* Ajuster l'apparence des cellules des en-têtes */
+  .ag-header-cell {
+    width: 100% !important; /* Ajuste la largeur automatiquement */
+    text-align: center; /* Centrer le texte dans l'en-tête */
+    white-space: normal; /* Permet le retour à la ligne */
+    padding: 5px 0; /* Ajoute un peu de padding pour espacer les éléments */
+    top: 0 !important;
+    left: 0 !important;
+    position: relative;
+  }
+}
+
+// cibler les colonnes sans titre et sans sort
+.ag-header-cell.no-actions .ag-header-cell-label {
+  justify-content: flex-start !important; /* gauche */
+  width: 100% !important;
+}

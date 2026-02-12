@@ -1,0 +1,12 @@
+<div
+  [ngStyle]="{
+    'background-color': isSelected ? user.color : 'transparent',
+    border: isSelected ? 'none' : '1px solid ' + user.color,
+    color: isSelected ? 'white' : user.color,
+  }"
+  class="draggable-item flex max-h-9 min-h-9 min-w-9 max-w-9 select-none items-center justify-center rounded-full text-white"
+  [routerLink]="['/users', user.id]"
+  [matTooltip]="user.firstname + ' ' + user.lastname"
+>
+  <span class="truncate text-2xs underline">{{ user.trigram }}</span>
+</div>

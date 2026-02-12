@@ -1,0 +1,39 @@
+<div
+  class="relative flex h-[200px] w-[323px] flex-col items-center gap-2 rounded-xl bg-[#F1F5F9] p-2"
+  [ngClass]="{ 'mt-[20px]': showDate() }"
+  [id]="teamleaderId()"
+  cdkDropList
+  [cdkDropListData]="affectedMissions()"
+  [cdkDropListConnectedTo]="['unaffected'].concat(availableIds())"
+  (cdkDropListDropped)="drop($event)"
+>
+  @if (showDate()) {
+    <div class="absolute left-0 top-[-20px] flex w-full cursor-pointer justify-center" (click)="goToSelectedDay()">
+      <p class="text-[16px] font-medium">{{ dateOfTheDay() | date: 'dd/MM/yyyy' }}</p>
+    </div>
+  }
+  <div class="grid grid-cols-3 gap-2">
+    @for (affectedMission of affectedMissions()?.slice(0, 6); track affectedMission.id; let i = $index) {
+      @if (i < 5) {
+        <div
+          class="h-full w-[100%]"
+          [class.cursor-grab]="!shouldDisableDrag()"
+          [ngClass]="{ 'col-span-3': affectedMissions()?.length == 1 }"
+          cdkDrag
+          [cdkDragDisabled]="shouldDisableDrag()"
+          [cdkDragData]="{ mission: affectedMission }"
+        >
+          <app-mission-card-weekly
+            [mission]="affectedMission"
+            [missions]="affectedMissions()"
+          ></app-mission-card-weekly>
+        </div>
+      }
+      @if (i == 5 && affectedMissions().length == 6) {
+        <app-mission-card-weekly [mission]="affectedMission" [missions]="affectedMissions()"></app-mission-card-weekly>
+      } @else if (i == 5 && affectedMissions().length > 6) {
+        <div class="flex h-full w-full items-center justify-center">+ {{ affectedMissions().length - 5 }}</div>
+      }
+    }
+  </div>
+</div>

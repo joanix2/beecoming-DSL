@@ -1,0 +1,858 @@
+using System.Security.Claims;
+using api.Models;
+using api.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using opteeam_api.DTOs;
+using opteeam_api.Extensions;
+using opteeam_api.Migrations;
+using opteeam_api.Models;
+using opteeam_api.Services;
+using opteeam_api.Utils;
+
+namespace opteeam_api.Controllers;
+
+/// <summary>
+///     Gestion des utilisateurs
+/// </summary>
+[ApiController]
+[Route("[controller]")]
+[Produces("application/json")]
+[Consumes("application/json")]
+[Authorize]
+public class UsersController(
+    ApplicationDbContext dbContext,
+    UserManager<ApplicationUser> userManager,
+    IEmailService emailService
+) : ControllerBase
+{
+    #region POST - Filtered User List (OData)
+
+    /// <summary>
+    ///     Récupérer la liste des utilisateurs
+    /// </summary>
+    /// <returns></returns>
+    [Authorize(Roles = "supervisor")]
+    [HttpPost("datagrid")]
+    public ActionResult<ListResponse<UserOutput>> GetUsersList(
+        ODataQueryOptions<ApplicationUser> options
+    )
+    {
+        try
+        {
+            var users = dbContext
+                .Users.Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .AsNoTracking();
+
+            if (options.Search?.RawValue != null)
+            {
+                var search = options.Search.RawValue.ToLower();
+                users = users.Where(c =>
+                    EF.Functions.ILike(c.Firstname + " " + c.Lastname, $"%{search}%")
+                    || EF.Functions.ILike(c.Lastname + " " + c.Firstname, $"%{search}%")
+                    || EF.Functions.ILike(c.Email.ToLower(), $"%{search}%")
+                );
+            }
+
+            var toto = users.ToQueryString();
+
+            users = options.ApplyAndGetCount(users, out var count);
+
+            var res = users.ToList();
+
+            return Ok(new ListResponse<UserOutput>(users.Select(u => new UserOutput(u)), count));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return StatusCode(500, "ERROR_GET_USERS_LIST");
+        }
+    }
+
+    #endregion
+
+    #region GET User details
+
+    /// <summary>
+    ///     Récupérer les détails d'un utilisateur
+    /// </summary>
+    /// <returns></returns>
+    [Authorize(Roles = "supervisor")]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<UserOutput>> GetUserDetail(Guid id)
+    {
+        var result = await LoadUser(id);
+        if (result == null)
+            return NotFound("USER_NOT_FOUND");
+
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region PUT Update User
+
+    /// <summary>
+    ///     Modification d'un utilisateur
+    /// </summary>
+    [Authorize(Roles = "supervisor")]
+    [HttpPut("{userId:guid}")]
+    public async Task<ActionResult<UserOutput>> UpdateUser(
+        Guid userId,
+        [FromBody] UserInput userInput
+    )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        // cas où l'utilisateur est un opérateur, l'affectation est obligatoire
+        if (
+            userInput.RoleIds is not null
+            && userInput.RoleIds.Contains(Guid.Parse(HardCode.OPERATOR_ID))
+            && userInput.AffectedToTeamleaderId is null
+        )
+        {
+            return BadRequest("OPERATOR_MUST_BE_AFFECTED_TO_TEAMLEADER");
+        }
+
+        //AffectationTeamleaderXOperator? affectationTeamleaderXOperator = null;
+        var result = await UpdateUserInternal(
+            userId,
+            async user =>
+            {
+                user.UpdateUserBase(userInput);
+                if (userInput.AffectedToTeamleaderId is not null)
+                {
+                    // remove old affectations
+                    if (userInput.Id is not null)
+                    {
+                        var oldAffectatonsDeletedNumber = dbContext
+                            .AffectationTeamleaderXOperators.Where(aff =>
+                                aff.OperatorId == userInput.Id
+                            )
+                            .ExecuteUpdate(
+                                (a) =>
+                                    a.SetProperty(ff => ff.EndedAt, DateTimeOffset.UtcNow)
+                                        .SetProperty(ff => ff.ArchivedAt, DateTimeOffset.UtcNow)
+                                        .SetProperty(ff => ff.UpdatedAt, DateTimeOffset.UtcNow)
+                            );
+                    }
+                    dbContext.AffectationTeamleaderXOperators.Add(
+                        new AffectationTeamleaderXOperator
+                        {
+                            IsDefault = true,
+                            OperatorId = user.Id,
+                            TeamleaderId = userInput.AffectedToTeamleaderId.Value,
+                            StartedAt = DateTime.Now.Date.ToUniversalTime(),
+                        }
+                    );
+                }
+            }
+        );
+
+        if (result == null)
+            return NotFound("USER_NOT_FOUND");
+
+        result = await dbContext
+            .Users.AsNoTracking()
+            .Where(u => u.Id == userId)
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync();
+
+        UserOutput userOutput;
+        if (userInput.AffectedToTeamleaderId != null)
+        {
+            var teamleader = await dbContext
+                .Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userInput.AffectedToTeamleaderId.Value);
+            userOutput = new UserOutput(result, teamleader);
+        }
+        else
+        {
+            userOutput = new UserOutput(result);
+        }
+
+        return Ok(userOutput);
+    }
+
+    [HttpPatch("affect-operators")]
+    public async Task<ActionResult<string>> AffectUser(
+        [FromBody] AffectationTeamLeaderOperatorInput newAffectations
+    )
+    {
+        var dateToday = DateTimeOffset.UtcNow.Date.ToUniversalTime();
+        if (newAffectations.EndedAt < dateToday)
+        {
+            return BadRequest(HardCode.AFFECTATION_OPERATOR_TEAMLEADER_FAIL);
+        }
+        try
+        {
+            var endOfThePeriod = newAffectations.EndedAt.AddDays(1).Date.ToUniversalTime();
+            //var endOfToday = DateTimeOffset.UtcNow.AddDays(1).Date;
+            // toutes les affectations en cours pour ce chef d'équipe
+            var oldAffectationsQuery = dbContext.AffectationTeamleaderXOperators.Where(aff =>
+                aff.TeamleaderId == newAffectations.TeamleaderId
+                && aff.StartedAt <= newAffectations.EndedAt
+                && (aff.EndedAt == null || aff.EndedAt >= newAffectations.StartedAt)
+            );
+
+            // suppression des anciennes affectations
+            // liste des operateurs qui ne travaillent plus cette semaine
+            var removedOperatorIds = oldAffectationsQuery
+                .Select(aff => aff.OperatorId)
+                .Where(id => !newAffectations.OperatorsIds.Contains(id))
+                .ToList();
+
+            foreach (
+                var affectation in oldAffectationsQuery.Where(aff =>
+                    removedOperatorIds.Contains(aff.OperatorId)
+                )
+            )
+            {
+                // les affectation incluses dans la semaine en question
+
+                if (
+                    !affectation.IsDefault
+                    && affectation.StartedAt >= newAffectations.StartedAt
+                    && affectation.EndedAt <= newAffectations.EndedAt
+                )
+                {
+                    affectation.UpdatedAt = DateTimeOffset.UtcNow;
+                    affectation.ArchivedAt = DateTimeOffset.UtcNow;
+                }
+                // les affectations qui englobent
+                else if (
+                    affectation.StartedAt < newAffectations.StartedAt
+                    && (affectation.EndedAt > newAffectations.EndedAt || affectation.IsDefault)
+                )
+                {
+                    var newAffectation = new AffectationTeamleaderXOperator
+                    {
+                        TeamleaderId = newAffectations.TeamleaderId,
+                        OperatorId = affectation.OperatorId,
+                        StartedAt = affectation.StartedAt,
+                        EndedAt = newAffectations.StartedAt.AddSeconds(-1),
+                        IsDefault = false,
+                    };
+                    dbContext.AffectationTeamleaderXOperators.Add(newAffectation);
+
+                    affectation.StartedAt = endOfThePeriod;
+                    affectation.UpdatedAt = DateTimeOffset.UtcNow;
+                }
+                // sinon les affectation qui chevauchent de droite ou de gauche
+                else
+                {
+                    if (
+                        affectation.EndedAt is null
+                        || affectation.EndedAt > newAffectations.EndedAt
+                    )
+                    {
+                        affectation.StartedAt = endOfThePeriod; // verifier les secondes
+                    }
+                    else if (affectation.EndedAt > newAffectations.StartedAt)
+                    {
+                        affectation.EndedAt = newAffectations.StartedAt.AddSeconds(-1);
+                    }
+                }
+            }
+
+            // ajout des nouvelles affectations
+            var oldOperatorsIds = oldAffectationsQuery.Select(aff => aff.OperatorId).ToList();
+
+            var AddedOperatorIds = newAffectations
+                .OperatorsIds.Where(id => !oldOperatorsIds.Contains(id))
+                .ToList();
+            foreach (var operatorId in AddedOperatorIds)
+            {
+                var newAffectation = new AffectationTeamleaderXOperator
+                {
+                    TeamleaderId = newAffectations.TeamleaderId,
+                    OperatorId = operatorId,
+                    StartedAt = newAffectations.StartedAt,
+                    EndedAt = newAffectations.EndedAt,
+                    IsDefault = false,
+                };
+                dbContext.AffectationTeamleaderXOperators.Add(newAffectation);
+                // remove or resize simultaniuos affectations
+                var samePeriodAffectations = dbContext.AffectationTeamleaderXOperators.Where(aff =>
+                    aff.OperatorId == operatorId
+                    && aff.StartedAt < newAffectation.EndedAt
+                    && (aff.EndedAt == null || aff.EndedAt > newAffectation.StartedAt )
+                ).ToList();
+                foreach (var aff in samePeriodAffectations)
+                {
+                    // affectations incluses => archivées
+                    if (
+                        aff.StartedAt >= newAffectations.StartedAt
+                        && aff.EndedAt <= newAffectations.EndedAt
+                    )
+                    {
+                        aff.UpdatedAt = DateTimeOffset.UtcNow;
+                        aff.ArchivedAt = DateTimeOffset.UtcNow;
+                    }// affectations qui englobent => coupées en deux
+                    else if (
+                        aff.StartedAt < newAffectations.StartedAt
+                        && (aff.EndedAt > newAffectations.EndedAt || aff.IsDefault)
+                    ) {
+                        var leftAffectation = new AffectationTeamleaderXOperator
+                        {
+                            TeamleaderId = aff.TeamleaderId,
+                            OperatorId = aff.OperatorId,
+                            StartedAt = aff.StartedAt,
+                            EndedAt = newAffectations.StartedAt.AddSeconds(-1),
+                            IsDefault = false,
+                        };
+                        dbContext.AffectationTeamleaderXOperators.Add(leftAffectation);
+
+                        aff.StartedAt = endOfThePeriod;
+                        aff.UpdatedAt = DateTimeOffset.UtcNow;
+                    }
+                    // sinon les affectation qui chevauchent de droite ou de gauche
+                    else
+                    {
+                        if (
+                            aff.EndedAt is null
+                            || aff.EndedAt > newAffectations.EndedAt
+                        )
+                        {
+                            aff.StartedAt = endOfThePeriod;
+                        }
+                        else if (aff.EndedAt > newAffectations.StartedAt)
+                        {
+                            aff.EndedAt = newAffectations.StartedAt.AddSeconds(-1);
+                        }
+                    }
+                }
+            }
+            await dbContext.SaveChangesAsync();
+
+            return Ok(true);
+        }
+        catch
+        {
+            return BadRequest(HardCode.GENERAL_ERROR);
+        }
+        /*
+        try
+        {
+            var dateToday = DateTimeOffset.UtcNow.Date.ToUniversalTime();
+
+            if (dateToday > newAffectations.EndedAt)
+            {
+                return BadRequest(HardCode.AFFECTATION_OPERATOR_TEAMLEADER_FAIL);
+            }
+            // toutes les affectations en cours pour ce chef d'équipe
+            var oldAffectationsQuery = dbContext.AffectationTeamleaderXOperators.Where(aff =>
+                aff.TeamleaderId == newAffectations.TeamleaderId
+                && aff.StartedAt <= newAffectations.EndedAt
+                && (aff.EndedAt == null || aff.EndedAt >= newAffectations.StartedAt)
+            );
+
+            // suppression des anciennes affectations
+            var removedOperatorIds = oldAffectationsQuery
+                .Select(aff => aff.OperatorId)
+                .Where(id => !newAffectations.OperatorsIds.Contains(id))
+                .ToList();
+
+            var newAffectationEndUTC = newAffectations.EndedAt.ToUniversalTime();
+
+            var ponctualAffectations = await oldAffectationsQuery
+                .Where(aff =>
+                    aff.IsDefault == false
+                    && aff.StartedAt == newAffectations.StartedAt
+                    && aff.EndedAt == newAffectations.EndedAt
+                    && removedOperatorIds.Contains(aff.OperatorId)
+                ) // je les archive
+                .ExecuteUpdateAsync(aff =>
+                    aff.SetProperty(a => a.UpdatedAt, DateTimeOffset.UtcNow)
+                        .SetProperty(a => a.ArchivedAt, DateTimeOffset.UtcNow)
+                );
+
+            // 2. les affectation longues mais pas infinies
+            var endOfTheDay = newAffectations.EndedAt.AddDays(1).Date.ToUniversalTime();
+
+            var longAffectations = await oldAffectationsQuery
+                .Where(aff =>
+                    aff.IsDefault == false
+                    && (
+                        aff.StartedAt != newAffectations.StartedAt
+                        || aff.EndedAt != newAffectations.EndedAt
+                    )
+                    && removedOperatorIds.Contains(aff.OperatorId)
+                )
+                .ToListAsync();
+
+            foreach (var aff in longAffectations)
+            {
+                if (
+                    aff.StartedAt < newAffectations.StartedAt
+                    && aff.EndedAt > newAffectations.EndedAt
+                )
+                {
+                    var longAffectation = new AffectationTeamleaderXOperator
+                    {
+                        TeamleaderId = aff.TeamleaderId,
+                        OperatorId = aff.OperatorId,
+                        IsDefault = false,
+                        StartedAt = aff.StartedAt,
+                        EndedAt = newAffectations.StartedAt.AddSeconds(-1),
+                    };
+                    aff.StartedAt = endOfTheDay;
+                    aff.UpdatedAt = endOfTheDay;
+
+                    dbContext.AffectationTeamleaderXOperators.Add(longAffectation);
+                }
+                else
+                {
+                    if (
+                        aff.EndedAt >= newAffectations.StartedAt
+                        && aff.EndedAt <= newAffectations.EndedAt
+                    )
+                    {
+                        aff.EndedAt = newAffectations.StartedAt.AddSeconds(-1);
+                    }
+                    if (
+                        aff.StartedAt >= newAffectations.StartedAt
+                        && aff.StartedAt <= newAffectations.EndedAt
+                    )
+                    {
+                        aff.StartedAt = newAffectations.EndedAt.AddDays(1).Date.ToUniversalTime();
+                    }
+                }
+            }
+
+            // 3. les affectation par default des opérateurs(affectation à supprimés), dans cette période
+            var defaultAffectations = oldAffectationsQuery
+                .Where(aff => aff.IsDefault && removedOperatorIds.Contains(aff.OperatorId))
+                .ToList();
+            foreach (var aff in defaultAffectations)
+            {
+                if (aff.StartedAt < newAffectations.StartedAt)
+                {
+                    var longAffectation = new AffectationTeamleaderXOperator
+                    {
+                        TeamleaderId = aff.TeamleaderId,
+                        OperatorId = aff.OperatorId,
+                        IsDefault = false,
+                        StartedAt = aff.StartedAt,
+                        EndedAt = newAffectations.StartedAt.AddSeconds(-1),
+                    };
+                    dbContext.AffectationTeamleaderXOperators.Add(longAffectation);
+                }
+                aff.StartedAt = endOfTheDay;
+                aff.UpdatedAt = DateTimeOffset.UtcNow;
+            }
+
+            // ajout des nouvelles affectations
+            var oldOperatorsIds = oldAffectationsQuery.Select(aff => aff.OperatorId).ToList();
+
+            var AddedOperatorIds = newAffectations
+                .OperatorsIds.Where(id => !oldOperatorsIds.Contains(id))
+                .ToList();
+            foreach (var operatorId in AddedOperatorIds)
+            {
+                var newAffectation = new AffectationTeamleaderXOperator
+                {
+                    TeamleaderId = newAffectations.TeamleaderId,
+                    OperatorId = operatorId,
+                    StartedAt = newAffectations.StartedAt,
+                    EndedAt = newAffectations.EndedAt,
+                    IsDefault = false,
+                };
+                dbContext.AffectationTeamleaderXOperators.Add(newAffectation);
+            }
+            await dbContext.SaveChangesAsync();
+
+            return Ok(true);
+        }
+        catch
+        {
+            return BadRequest(HardCode.GENERAL_ERROR);
+        }*/
+    }
+
+    #endregion
+
+    #region DELETE User
+
+    /// <summary>
+    ///     Suppression d'un utilisateur
+    /// </summary>
+    [Authorize(Roles = "supervisor")]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser(Guid id)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null)
+            return NotFound("USER_NOT_FOUND");
+
+        //dbContext.Users.Remove(user);
+        user.ArchivedAt = DateTime.UtcNow;
+        await dbContext.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [Authorize(Roles = "supervisor")]
+    [HttpGet("restaure/{id:guid}")]
+    public async Task<IActionResult> RestaureUser(Guid id)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null)
+            return NotFound("USER_NOT_FOUND");
+
+        //dbContext.Users.Remove(user);
+        user.ArchivedAt = null;
+        await dbContext.SaveChangesAsync();
+        return NoContent();
+    }
+
+    #endregion
+
+    #region GET Profile
+
+    /// <summary>
+    ///     GET pour obtenir les informations de l'utilisateur connecté (profil)
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("profile")]
+    public async Task<ActionResult<UserOutput>> GetProfile()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var result = await LoadUser(Guid.Parse(userId));
+        if (result == null)
+            return Unauthorized();
+
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region Update Profile
+
+    /// <summary>
+    ///     Modification des informations de l'utilisateur connecté (addresse de livraison, addresse de facturation, etc.)
+    /// </summary>
+    /// <param name="userProfileInput"></param>
+    /// <returns></returns>
+    [HttpPut("profile")]
+    public async Task<ActionResult<UserOutput>> UpdateProfile(
+        [FromBody] ProfileInput userProfileInput
+    )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var result = await UpdateUserInternal(
+            Guid.Parse(userId),
+            user =>
+            {
+                user.UpdateCurrentUser(userProfileInput);
+            }
+        );
+
+        if (result == null)
+            return Unauthorized();
+
+        return Ok(new UserOutput(result));
+    }
+
+    #endregion
+
+    #region GET Roles
+
+    /// <summary>
+    ///     Récupérer les rôles
+    /// </summary>
+    [Authorize(Roles = "supervisor")]
+    [HttpGet("roles")]
+    public async Task<ActionResult<List<RoleOutput>>> GetRoles()
+    {
+        var roles = await dbContext
+            .Roles.Select(role => new RoleOutput
+            {
+                Id = role.Id,
+                Name = role.Name ?? "",
+                Color = role.Color ?? "#FFFFFF",
+            })
+            .ToListAsync();
+
+        return Ok(roles);
+    }
+
+    #endregion
+
+    #region GET Tags
+
+    /// <summary>
+    ///     Récupérer les tags
+    /// </summary>
+    [HttpGet("tags")]
+    public async Task<ActionResult<List<UserTagOutput>>> GetTags(
+        string role,
+        DateTimeOffset date,
+        DateTimeOffset? dateTo
+    )
+    {
+        try
+        {
+            DateTimeOffset endOfPeriodUtc = dateTo is null
+                ? date.AddDays(1).AddSeconds(-1)
+                : dateTo.Value.AddDays(1).AddSeconds(-1);
+
+            var users = await dbContext
+                .Users.Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == role))
+                .Where(u =>
+                    !u.UserAbsences.Any(ua => ua.StartDate <= endOfPeriodUtc && ua.EndDate >= date)
+                )
+                .Include(u =>
+                    u.AffectedOperatorsToTeamleader.Where(aff =>
+                        (
+                            !aff.IsDefault
+                            && aff.EndedAt != null
+                            && aff.StartedAt < endOfPeriodUtc
+                            && aff.EndedAt > date
+                        )
+                        || (aff.IsDefault && aff.EndedAt == null && aff.StartedAt <= endOfPeriodUtc)
+                    )
+                )
+                .ThenInclude(aff => aff.Operator)
+                .ToListAsync();
+
+            return Ok(users.Select(u => new UserTagOutput(u)).ToList());
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
+    }
+
+    #endregion
+
+    #region get operators
+
+    [HttpGet("operators")]
+    [Authorize(Roles = "teamleader,supervisor")]
+    public async Task<ActionResult<List<OperatorOutput>>> GetAvailableOperators(
+        string role,
+        DateTimeOffset date,
+        DateTimeOffset? dateTo
+    )
+    {
+        try
+        {
+            DateTimeOffset endOfPeriodUtc = dateTo is null
+                ? date.AddDays(1).AddSeconds(-1)
+                : dateTo.Value;
+
+            var users = await dbContext
+                .Users.Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == role))
+                .Where(u =>
+                    !u.UserAbsences.Any(ua => ua.StartDate <= endOfPeriodUtc && ua.EndDate >= date)
+                )
+                .ToListAsync();
+            return Ok(
+                users.Select(u => new OperatorOutput(u, false, DateTimeOffset.Now, null)).ToList()
+            );
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private async Task<UserOutput?> LoadUser(Guid id)
+    {
+        var user = await dbContext
+            .Users
+            //.AsNoTracking()
+            .Where(u => u.Id == id)
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync();
+        if (user is null)
+            return null;
+
+        ApplicationUser? teamleader = null;
+        if (!user.UserRoles.Any(x => x.RoleId == Guid.Parse(HardCode.TEAMLEADER_ID)))
+            teamleader = dbContext
+                .AffectationTeamleaderXOperators.Where(x =>
+                    x.ArchivedAt == null && x.EndedAt == null && x.OperatorId == user.Id
+                )
+                .Include(x => x.Teamleader)
+                .OrderBy(x => x.StartedAt)
+                .LastOrDefault()
+                ?.Teamleader;
+
+        return teamleader is null ? new UserOutput(user) : new UserOutput(user, teamleader);
+    }
+
+    private async Task<ApplicationUser?> UpdateUserInternal(
+        Guid id,
+        Action<ApplicationUser> updateAction
+    )
+    {
+        var user = await dbContext
+            .Users.Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null)
+            return null;
+
+        updateAction(user);
+        dbContext.Users.Update(user);
+        await dbContext.SaveChangesAsync();
+        return user;
+    }
+
+    #endregion
+
+    #region POST Create User
+
+    /// <summary>
+    ///     Inscription d'un utilisateur
+    /// </summary>
+    [Authorize(Roles = "supervisor")]
+    [HttpPost]
+    public async Task<ActionResult<Guid>> CreateUser([FromBody] UserInput newUser)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        // Cache des GUIDs pour éviter le parsing répétitif
+        var operatorRoleId = Guid.Parse(HardCode.OPERATOR_ID);
+        var teamleaderRoleId = Guid.Parse(HardCode.TEAMLEADER_ID);
+
+        // Validation métier consolidée
+        var validationResult = await ValidateUserCreation(
+            newUser,
+            operatorRoleId,
+            teamleaderRoleId
+        );
+        if (validationResult != null)
+            return validationResult;
+
+        // Vérifier si l'email existe déjà
+        var existingUser = await userManager.FindByEmailAsync(newUser.Email);
+        if (existingUser != null)
+            return Conflict("EMAIL_IS_ALREADY_USED");
+
+        // Utilisation d'une transaction pour garantir la cohérence
+        using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        try
+        {
+            var password = PasswordGenerator.GeneratePassword();
+            var user = new ApplicationUser(newUser, password, userManager);
+
+            await dbContext.SaveChangesAsync();
+
+            // Créer l'affectation si nécessaire AVANT l'envoi d'email
+            var isOperator = IsOperator(newUser.RoleIds, operatorRoleId);
+            if (isOperator && newUser.AffectedToTeamleaderId.HasValue)
+            {
+                var newAffectation = new AffectationTeamleaderXOperator(
+                    newUser.AffectedToTeamleaderId.Value,
+                    user.Id
+                );
+                dbContext.AffectationTeamleaderXOperators.Add(newAffectation);
+                await dbContext.SaveChangesAsync();
+            }
+
+            // Envoi d'email (dernière étape qui peut échouer)
+            await userManager.SendEmailConfirmationLinkAsync(
+                emailService,
+                user,
+                Request,
+                Url,
+                password
+            );
+
+            // Si tout s'est bien passé, valider la transaction
+            await transaction.CommitAsync();
+
+            return CreatedAtAction(nameof(GetUserDetail), new { id = user.Id }, user.Id);
+        }
+        catch (Exception ex)
+        {
+            // Rollback automatique de la transaction
+            await transaction.RollbackAsync();
+
+            // Log approprié (TODO: remplacer par un vrai logger)
+            Console.WriteLine($"Error creating user {newUser.Email}: {ex.Message}");
+
+            // Retourner une erreur appropriée selon le type d'exception
+            return ex.Message.Contains("email", StringComparison.OrdinalIgnoreCase)
+                ? StatusCode(500, "EMAIL_SENDING_ERROR")
+                : StatusCode(500, "USER_CREATION_ERROR");
+        }
+    }
+
+    /// <summary>
+    ///     Valide les règles métier pour la création d'utilisateur
+    /// </summary>
+    private async Task<ActionResult?> ValidateUserCreation(
+        UserInput newUser,
+        Guid operatorRoleId,
+        Guid teamleaderRoleId
+    )
+    {
+        if (newUser.RoleIds == null || !newUser.RoleIds.Any())
+            return BadRequest("USER_MUST_HAVE_AT_LEAST_ONE_ROLE");
+
+        var isOperator = IsOperator(newUser.RoleIds, operatorRoleId);
+
+        // Cas où l'utilisateur est un opérateur
+        if (isOperator)
+        {
+            if (!newUser.AffectedToTeamleaderId.HasValue)
+                return BadRequest("OPERATOR_MUST_BE_AFFECTED_TO_TEAMLEADER");
+
+            var teamleader = await dbContext
+                .Users.Where(u => u.Id == newUser.AffectedToTeamleaderId.Value)
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync();
+
+            if (teamleader == null)
+                return BadRequest("TEAMLEADER_NOT_FOUND");
+
+            if (teamleader.ArchivedAt.HasValue)
+                return BadRequest("TEAMLEADER_IS_ARCHIVED");
+
+            if (!teamleader.UserRoles.Any(r => r.RoleId == teamleaderRoleId))
+                return BadRequest("ASSIGNED_USER_IS_NOT_A_TEAMLEADER");
+        }
+
+        return null; // Pas d'erreur de validation
+    }
+
+    /// <summary>
+    ///     Détermine si un utilisateur a le rôle d'opérateur
+    /// </summary>
+    private static bool IsOperator(IEnumerable<Guid> roleIds, Guid operatorRoleId)
+    {
+        return roleIds.Contains(operatorRoleId);
+    }
+
+    #endregion
+}

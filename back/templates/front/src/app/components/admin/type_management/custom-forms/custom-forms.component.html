@@ -1,0 +1,24 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <span class="flex items-center gap-2 text-lg font-bold">
+      <mat-icon svgIcon="types"></mat-icon>
+      {{ tr.language().CUSTOM_FORMS }}
+    </span>
+
+    <button mat-stroked-button color="primary" (click)="goToDetails('new')">
+      {{ tr.language().ADD_CUSTOM_FORM }}
+    </button>
+  </div>
+
+  <div class="h-[40vh]">
+    <app-datagrid
+      #datagrid
+      (rowClick)="goToDetails($event.id)"
+      [columnDefs]="columnDefs()"
+      [data]="customFormsSignal()"
+      [fetchParamsSignal]="fetchParamsSignal"
+      [rowCountSignal]="customFormsCount"
+      [datagridName]="datagridName()"
+    ></app-datagrid>
+  </div>
+</div>

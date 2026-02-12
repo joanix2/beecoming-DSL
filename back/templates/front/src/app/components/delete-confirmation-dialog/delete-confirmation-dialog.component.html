@@ -1,0 +1,12 @@
+<div class="title mb-2 font-bold" mat-dialog-title>{{ title }}</div>
+<div class="mb-5" mat-dialog-content>
+  <div class="text-sm">
+    {{ message }}
+  </div>
+</div>
+<div class="flex w-full justify-center gap-2" mat-dialog-actions>
+  <button mat-stroked-button type="button" class="primary" (click)="onCancel()">
+    {{ tr.language().DEACTIVATE_CANCEL }}
+  </button>
+  <button mat-flat-button type="submit" (click)="onConfirm()">Supprimer</button>
+</div>

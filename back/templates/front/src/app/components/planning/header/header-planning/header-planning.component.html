@@ -1,0 +1,89 @@
+<div class="flex flex-col gap-2 text-secondary 2xl:flex-row 2xl:justify-between">
+  <!-- navigation -->
+  <div class="flex flex-col gap-2 lg:flex-row lg:items-center">
+    <div class="flex flex-row items-center">
+      <span>Mode :</span>
+
+      <app-switch-button
+        [isChecked]="isWeeklyViewSignal()"
+        (onToggleChange)="onSwitchChange($event)"
+        [leftSwitchWord]="tr.language().DAILY"
+        [rightSwitchWord]="tr.language().WEEKLY"
+      ></app-switch-button>
+    </div>
+
+    <!-- buttons de navigations + date -->
+    <div class="flex items-center gap-1">
+      <button mat-icon-button type="button" (click)="previousWeekOrDay()">
+        <mat-icon color="primary">chevron_left</mat-icon>
+      </button>
+
+      <div class="text-center" [ngClass]="isWeeklyViewSignal() ? 'w-[3rem]' : 'w-[10rem]'">
+        @if (isWeeklyViewSignal()) {
+          <span>{{ selectedDateSignal() | customWeek: today }}</span>
+        } @else {
+          <span>{{ selectedDateSignal().setLocale('fr').toFormat('cccc, dd LLLL') }}</span>
+        }
+      </div>
+
+      <button mat-icon-button type="button" (click)="nextWeekOrDay()">
+        <mat-icon color="primary">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <!-- aujourd'hui + map view + settings -->
+    <div class="flex gap-4">
+      <button mat-stroked-button color="primary" (click)="goToday()">
+        {{ !isWeeklyViewSignal() ? tr.language().TODAY : tr.language().THIS_WEEK }}
+      </button>
+
+      <button mat-stroked-button color="primary" (click)="handleMapView()">
+        {{ tr.language().MAP_VIEW }}
+      </button>
+      <button mat-icon-button class="!rounded-full" type="button" [matMenuTriggerFor]="menu">
+        <mat-icon color="primary">settings</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-menu #menu="matMenu" class="navbar-menu">
+    <div class="flex flex-col gap-2 p-2">
+      <app-switch-button
+        [isChecked]="isShowWeekendSignal()"
+        (onToggleChange)="onSwitchShowWeekendChange($event)"
+        [leftSwitchWord]="''"
+        [rightSwitchWord]="tr.language().SHOW_WEEKEND_SHORT"
+      ></app-switch-button>
+      <app-switch-button
+        [isChecked]="includeFinishedSignal()"
+        (onToggleChange)="onSwitchShowFinishedMissionsChange($event)"
+        [leftSwitchWord]="''"
+        [rightSwitchWord]="tr.language().SHOW_FINISHED_MISSIONS_SHORT"
+      ></app-switch-button>
+    </div>
+  </mat-menu>
+
+  <!-- équipes -->
+  @if (!isWeeklyViewSignal()) {
+    <div class="flex items-center gap-2">
+      <span>Equipes :</span>
+
+      <div
+        class="flex items-center gap-1 overflow-x-auto"
+        (cdkDropListDropped)="reorderPlanning($event)"
+        [cdkDropListData]="teamleaders()"
+        cdkDropList
+        cdkDropListOrientation="mixed"
+      >
+        @for (team of teamleaders(); track team.id) {
+          <app-user-trigram-circle
+            [user]="team"
+            [isSelected]="true"
+            cdkDrag
+            [cdkDragData]="team.id"
+          ></app-user-trigram-circle>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,94 @@
+.NgxEditor ul,
+ol {
+  padding-left: 3rem;
+}
+.NgxEditor ul li {
+  list-style-type: disc;
+}
+
+.NgxEditor ol li {
+  list-style-type: decimal;
+}
+
+.NgxEditor h1 {
+  font-size: 2em;
+  color: #333;
+  font-weight: bold;
+  margin: 0.67em 0;
+}
+
+.NgxEditor h2 {
+  font-size: 1.5em;
+  color: #444;
+  font-weight: bold;
+  margin: 0.75em 0;
+}
+
+.NgxEditor h3 {
+  font-size: 1.17em;
+  color: #555;
+  font-weight: bold;
+  margin: 0.83em 0;
+}
+
+.NgxEditor h4 {
+  font-size: 1em;
+  color: #666;
+  font-weight: bold;
+  margin: 1.12em 0;
+}
+
+.NgxEditor h5 {
+  font-size: 0.83em;
+  color: #777;
+  font-weight: bold;
+  margin: 1.5em 0;
+}
+
+.NgxEditor h6 {
+  font-size: 0.67em;
+  color: #888;
+  font-weight: bold;
+  margin: 1.67em 0;
+}
+
+.NgxEditor a {
+  font-size: 1em;
+  color: #0000cd;
+  text-decoration: underline;
+}
+.NgxEditor p {
+  font-size: 1em;
+}
+.NgxEditor {
+  min-height: 13rem;
+}
+.NgxEditor__Content {
+  min-height: 13rem;
+}
+
+.richtext {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  a,
+  ul,
+  li,
+  ol {
+    font-size: revert;
+    font-weight: revert;
+    margin: revert;
+    color: revert;
+    text-decoration: revert;
+    list-style-type: revert;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}

@@ -1,0 +1,90 @@
+<div class="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
+  <div [formGroup]="addressFormGroup" class="flex h-full w-full flex-grow basis-1/2 flex-col gap-2">
+    <!-- Titre -->
+    @if (label()) {
+      <div class="flex w-full items-center justify-between">
+        <h2>{{ label() }}</h2>
+      </div>
+    }
+
+    <div class="grid h-full grid-cols-4 gap-2">
+      <!-- Adresse principale -->
+      <app-edit-text-field
+        label="{{ tr.language().FORM_ADDRESS }}"
+        [formControl]="streetControl"
+        [isEditMode]="isEditMode"
+        class="col-span-full"
+        [errors]="[FIELD_ERRORS.required]"
+      ></app-edit-text-field>
+
+      <!-- ZIP, Ville, Pays -->
+      <app-edit-text-field
+        label="{{ tr.language().FORM_ZIP }}"
+        [formControl]="postalCodeControl"
+        [isEditMode]="isEditMode"
+        class="col-span-1"
+        [errors]="[FIELD_ERRORS.required, FIELD_ERRORS.postalCode]"
+      ></app-edit-text-field>
+
+      <app-edit-text-field
+        label="{{ tr.language().FORM_CITY }}"
+        [formControl]="cityControl"
+        [isEditMode]="isEditMode"
+        class="col-span-2"
+        [errors]="[FIELD_ERRORS.required]"
+      ></app-edit-text-field>
+
+      <app-edit-text-field
+        label="{{ tr.language().FORM_COUNTRY }}"
+        [formControl]="countryControl"
+        [isEditMode]="isEditMode"
+        class="col-span-1"
+        [errors]="[FIELD_ERRORS.required]"
+      ></app-edit-text-field>
+
+      <!-- Complément d'adresse -->
+      <app-edit-text-field
+        label="{{ tr.language().FORM_SUPPLEMENT }}"
+        [formControl]="additionalInfoControl"
+        [isEditMode]="isEditMode"
+        class="col-span-full"
+      ></app-edit-text-field>
+
+      <div class="col-span-3 flex gap-2">
+        <!-- Latitude, Longitude, Bouton Localiser -->
+        <app-edit-number-field
+          label="{{ tr.language().FORM_LATITUDE }}"
+          [formControl]="latitudeControl"
+          [isEditMode]="isEditMode"
+          class="flex-1"
+        ></app-edit-number-field>
+
+        <app-edit-number-field
+          label="{{ tr.language().FORM_LONGITUDE }}"
+          [formControl]="longitudeControl"
+          [isEditMode]="isEditMode"
+          class="flex-1"
+        ></app-edit-number-field>
+      </div>
+
+      <div class="col-span-1 flex h-full items-end justify-end">
+        <button
+          mat-stroked-button
+          class="mb-4 !w-fit"
+          title="{{ tr.language().FORM_LOCATE }}"
+          (click)="localize()"
+          [disabled]="!isEditMode()"
+        >
+          @if (isLoading()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon class="flex" svgIcon="localisation" color="primary" class="!ml-0 !mr-0"></mat-icon>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="h-[400px] w-full">
+    <app-map-view [addresses]="signalAddress()" />
+  </div>
+</div>

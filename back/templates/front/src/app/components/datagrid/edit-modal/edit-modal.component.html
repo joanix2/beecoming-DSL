@@ -1,0 +1,12 @@
+<div class="flex h-full items-center justify-between gap-2">
+  <button mat-icon-button class="!rounded-full" (click)="onEdit()">
+    <mat-icon svgIcon="edit"></mat-icon>
+  </button>
+  <button mat-icon-button class="!rounded-full" (click)="onDelete()">
+    <mat-icon
+      class="custom-color-icon"
+      [ngStyle]="{ '--custom-color': 'var(--colors-status-error)' }"
+      svgIcon="delete"
+    ></mat-icon>
+  </button>
+</div>

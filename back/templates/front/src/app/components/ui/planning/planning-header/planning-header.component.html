@@ -1,0 +1,38 @@
+<div class="flex w-full justify-between">
+  <div class="flex flex-row items-center">
+    <div class="flex flex-row items-center gap-2">
+      <span>{{ translateService.language().MODE }}:</span>
+      <p>{{ translateService.language().DAILY }}</p>
+      <mat-slide-toggle></mat-slide-toggle>
+      <p>{{ translateService.language().WEEKLY }}</p>
+    </div>
+
+    <mat-divider vertical="true" class="muted h-8 pl-4"></mat-divider>
+    <div class="flex flex-row items-center gap-2">
+      <button mat-button class="flex items-center justify-center" (click)="changeDate(false)">
+        <mat-icon class="text-xxl">chevron_left</mat-icon>
+      </button>
+      <p class="w-[150px]">{{ today() | date: 'EEEE dd MMM' }}</p>
+      <button mat-button class="flex items-center justify-center" (click)="changeDate(true)">
+        <mat-icon class="text-xxl">chevron_right</mat-icon>
+      </button>
+      <button mat-button class="tertiary w-1/2" (click)="setToday()">{{ translateService.language().TODAY }}</button>
+    </div>
+    <mat-divider vertical="true" class="muted h-8"></mat-divider>
+
+    <div class="flex flex-row items-center gap-4">
+      <button mat-button class="flex items-center justify-center">{{ translateService.language().VIEW_CARD }}</button>
+      <button mat-button class="flex items-center justify-center">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="flew-row flex items-center gap-4">
+    <span>{{ translateService.language().TEAMS }}:</span>
+    <app-equipe-chip equipe="ABC" [isAbsent]="true"></app-equipe-chip>
+    <app-equipe-chip equipe="ABC" [isAbsent]="true"></app-equipe-chip>
+    <app-equipe-chip equipe="ABC" [isAbsent]="false"></app-equipe-chip>
+    <app-equipe-chip equipe="ABC" [isAbsent]="false"></app-equipe-chip>
+  </div>
+</div>

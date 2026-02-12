@@ -1,0 +1,158 @@
+services:
+  npm:
+    container_name: npm
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data:/data
+      - ./data/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy-network
+
+  front:
+    container_name: front
+    image: opteeam/front:test
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    restart: unless-stopped
+    environment:
+      API_URL: $API_URL
+    expose:
+      - 3000
+    networks:
+      - proxy-network
+
+  api:
+    container_name: api
+    image: opteeam/api:test
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: $ENVIRONMENT
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+      FRONT_URL: $FRONT_URL
+      SMTP_HOST: $SMTP_HOST
+      SMTP_FROM: $SMTP_FROM
+      SMTP_PASSWORD: $SMTP_PASSWORD
+      SMTP_PORT: $SMTP_PORT
+      JWT_KEY: $JWT_KEY
+      JWT_ISSUER: $API_URL
+      JWT_AUDIENCE: $API_URL
+      MINIO_URL: $MINIO_URL
+      MINIO_BUCKETNAME: $MINIO_BUCKETNAME
+      MINIO_ACCESSKEY: $MINIO_ACCESSKEY
+      MINIO_SECRETKEY: $MINIO_SECRETKEY
+      DATA_IMPORT_CRON_EXPRESSION: $DATA_IMPORT_CRON_EXPRESSION
+      DATA_IMPORT_FILE_NAME: $DATA_IMPORT_FILE_NAME
+      DATA_IMPORT_FILE_PATH: $DATA_IMPORT_FILE_PATH
+      DATA_IMPORT_EMAIL_FOR_COPY: $DATA_IMPORT_EMAIL_FOR_COPY
+      DATA_IMPORT_BACKUP_PATH: $DATA_IMPORT_BACKUP_PATH
+    volumes:
+      - ./sftp-data:/app/sftp-data
+      - ./sftp-backups:/app/sftp-backups
+    expose:
+      - 8080
+    networks:
+      - proxy-network
+      - db-network
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - db-network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: $PGADMIN_DEFAULT_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_DEFAULT_PASSWORD
+    networks:
+      - proxy-network
+      - db-network
+    depends_on:
+      - postgres
+
+  pgbackups:
+    container_name: pgbackups
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    volumes:
+      - ./backup:/backups
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_EXTRA_OPTS: "-Z9 --schema=public --blobs"
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+    networks:
+      - db-network
+
+  minio:
+    container_name: minio
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: $MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+    volumes:
+      - ./minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - proxy-network
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_LABEL_ENABLE: true
+      WATCHTOWER_POLL_INTERVAL: 60
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+  sftp:
+    image: atmoz/sftp
+    container_name: sftp
+    ports:
+      - "2222:22"
+    volumes:
+      - ./sftp-data:/home/$SFTP_USERNAME/
+    environment:
+      - SFTP_USERS=$SFTP_USERNAME:$SFTP_PASSWORD:1001
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+volumes:
+  pgdata:
+
+networks:
+  proxy-network:
+  db-network:

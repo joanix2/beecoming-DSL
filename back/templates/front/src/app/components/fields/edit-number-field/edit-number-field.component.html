@@ -1,0 +1,21 @@
+<div class="flex flex-col gap-2">
+  <mat-label class="filed-label !text-secondary">{{ label }}</mat-label>
+
+  @if (isEditMode()) {
+    <mat-form-field class="w-full">
+      <label for="numberInput" class="sr-only">{{ placeholder }}</label>
+      <input
+        id="numberInput"
+        matInput
+        type="number"
+        [formControl]="formControl"
+        [placeholder]="placeholder"
+        [title]="placeholder"
+        [disabled]="isDisabled()"
+      />
+    </mat-form-field>
+    <app-error-message [control]="formControl" [errors]="errors"></app-error-message>
+  } @else {
+    <p [ngClass]="nowrap ? 'whitespace-nowrap' : ''">{{ formControl.value }}</p>
+  }
+</div>

@@ -1,0 +1,20 @@
+<span class="flex items-center gap-2 text-lg font-bold">
+  <mat-icon svgIcon="archive"></mat-icon>
+  {{ tr.language().ARCHIVES }}
+</span>
+
+<div class="flex items-center gap-12 self-stretch pt-6">
+  <img src="assets/icons/archives.svg" alt="logo" class="h-20 w-20" />
+
+  <div class="flex flex-1 flex-col gap-4">
+    <span class="font-semibold text-secondary">{{ tr.language().SHOW_WEEKEND_ON_PLANNING }}</span>
+
+    <div class="flex gap-4">
+      @for (button of buttons; track button.label) {
+        <button mat-stroked-button color="primary" class="w-fit" (click)="button.onClick()">
+          {{ button.label }}
+        </button>
+      }
+    </div>
+  </div>
+</div>
