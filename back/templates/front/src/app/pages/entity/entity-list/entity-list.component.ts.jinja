@@ -1,0 +1,173 @@
+import { Component, computed, effect, signal, viewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { firstValueFrom } from 'rxjs';
+{% if entity.has_filters -%}
+import {
+  CheckboxFilterComponent,
+  ColorCheckbox,
+  ColorCheckboxAndCount,
+} from '../../components/datagrid/checkbox-filter/checkbox-filter.component';
+{% endif -%}
+{% if entity.has_color_cell -%}
+import { ColorCellComponent } from '../../components/datagrid/color-cell/color-cell.component';
+{% endif -%}
+import { DatagridComponent, FilterParams, textFilterToReplace } from '../../components/datagrid/datagrid.component';
+import { HeaderListComponent } from '../../components/header-list/header-list.component';
+import { AppService } from '../../services/app.service';
+import { TranslationService } from '../../services/translation/translation.service';
+import { {{ entity.output_model }}, {{ entity.list_response_model }} } from '../../api/models';
+import { {{ entity.service_name }} } from '../../api/services';
+
+@Component({
+  selector: 'app-{{ entity.name_kebab }}-list',
+  standalone: true,
+  imports: [HeaderListComponent, DatagridComponent],
+  templateUrl: './{{ entity.name_kebab }}-list.component.html',
+  styleUrls: ['./{{ entity.name_kebab }}-list.component.scss'],
+})
+export class {{ entity.name_pascal }}ListComponent {
+  {{ entity.name_camel }}Signal = signal<{{ entity.list_response_model }} | null>(null);
+  fetchParamsSignal = signal<FilterParams>({});
+  {{ entity.name_camel }}Count = signal<number>(0);
+
+  // Reference datagrid
+  datagrid = viewChild<DatagridComponent<{{ entity.output_model }}>>('datagrid');
+
+  columnDefs = computed<ColDef<{{ entity.output_model }}>[]>(() => [
+    {% for column in entity.columns -%}
+    {
+      headerName: this.translateService.language().{{ column.translation_key }},
+      {% if column.sort -%}
+      sort: '{{ column.sort }}',
+      sortIndex: {{ column.sort_index }},
+      {% endif -%}
+      field: '{{ column.field }}',
+      {% if column.filter -%}
+      {% if column.filter_type == 'checkbox' -%}
+      filter: CheckboxFilterComponent,
+      filterParams: {
+        fetchFilterValues: async () => {
+          return await this.get{{ column.filter_method }}();
+        },
+        displaySearchBar: {{ column.display_search_bar | lower }},
+        filterKey: `{{ column.filter_key }}`,
+      },
+      {% else -%}
+      filter: true,
+      filterParams: {
+        filterOptions: {{ column.filter_options | tojson }},
+        {% if column.filter_key -%}
+        filterKey: '{{ column.filter_key }}',
+        {% endif -%}
+        maxNumConditions: {{ column.max_conditions }},
+      },
+      {% endif -%}
+      {% endif -%}
+      type: '{{ column.type }}',
+      sortable: {{ column.sortable | lower }},
+      {% if column.cell_renderer -%}
+      {% if column.cell_renderer == 'ColorCellComponent' -%}
+      cellRendererSelector: (params: ICellRendererParams) => {
+        return {
+          component: ColorCellComponent,
+          params: {
+            color: params.value,
+          },
+        };
+      },
+      {% elif column.cell_renderer == 'ChipComponent' -%}
+      cellRenderer: 'ChipComponent',
+      cellRendererParams: (params: ICellRendererParams) => {
+        return {
+          value: params.data?.{{ column.field }}?.map((item: any) => ({
+            label: {{ column.chip_label }},
+            color: {{ column.chip_color }},
+          })),
+        };
+      },
+      {% elif column.cell_renderer == 'boolean' -%}
+      cellRenderer: (params: { value: boolean }) =>
+        params.value ? this.translateService.language().YES : this.translateService.language().NO,
+      {% else -%}
+      cellRenderer: {{ column.cell_renderer }},
+      {% endif -%}
+      {% endif -%}
+    },
+    {% endfor -%}
+  ]);
+
+  constructor(
+    protected readonly router: Router,
+    protected readonly translateService: TranslationService,
+    private readonly {{ entity.name_camel }}Service: {{ entity.service_name }},
+    private readonly appService: AppService,
+  ) {
+    let firstLoad = true;
+    effect(async () => {
+      const fetchParams = this.fetchParamsSignal();
+      {% if entity.has_filters -%}
+      {% for filter in entity.filters -%}
+      if (this.{{ filter.name }}.length === 0) {
+        this.{{ filter.name }} = await this.fetch{{ filter.method }}();
+      }
+      {% endfor -%}
+      {% endif -%}
+      if (firstLoad) {
+        firstLoad = false;
+        return;
+      }
+      await this.loadData(fetchParams);
+    });
+
+    effect(() => {
+      this.{{ entity.name_camel }}Count.set(this.{{ entity.name_camel }}Signal()?.count ?? 0);
+    });
+  }
+
+  {% if entity.has_filters -%}
+  {% for filter in entity.filters -%}
+  {{ filter.name }}: {{ filter.type }}[] = [];
+
+  async fetch{{ filter.method }}(): Promise<{{ filter.type }}[]> {
+    if (this.{{ filter.name }}.length > 0) return this.{{ filter.name }};
+    this.{{ filter.name }} = await firstValueFrom(this.{{ entity.name_camel }}Service.{{ filter.service_method }}());
+    return this.{{ filter.name }};
+  }
+
+  async get{{ filter.method }}(): Promise<ColorCheckboxAndCount> {
+    if (this.{{ filter.name }}.length === 0) {
+      await this.fetch{{ filter.method }}();
+    }
+    return {
+      colorCheckbox: this.{{ filter.name }}.map<ColorCheckbox>((item) => ({
+        label: {{ filter.label_expression }},
+        value: item.id ?? '',
+        color: item.color ?? '',
+      })),
+      count: this.{{ filter.name }}.length,
+    };
+  }
+  {% endfor -%}
+  {% endif -%}
+
+  async loadData(fetchParams: FilterParams = {}) {
+    const data = await firstValueFrom(this.{{ entity.name_camel }}Service.{{ entity.api_method_datagrid }}(fetchParams));
+    this.{{ entity.name_camel }}Signal.set(data);
+  }
+
+  goTo{{ entity.name_pascal }}Details(id: string): void {
+    this.appService.goTo(['{{ entity.route_name }}', id]);
+  }
+
+  onSearchInput($event: string) {
+    // Reset pagination
+    this.datagrid()?.agGrid.api?.paginationGoToFirstPage();
+    this.datagrid()?.paginator.firstPage();
+
+    this.fetchParamsSignal.update((params) => ({
+      ...params,
+      $search: $event,
+    }));
+  }
+}

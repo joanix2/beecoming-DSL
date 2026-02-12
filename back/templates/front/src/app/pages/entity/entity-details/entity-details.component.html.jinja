@@ -1,0 +1,67 @@
+<div class="mt-8">
+  <div class="container mx-auto flex flex-col gap-5 rounded bg-white p-6 outline outline-1 outline-slate-200">
+    <app-detail-topbar
+      (back)="goBack()"
+      (cancel)="cancelEdition()"
+      (submit)="submit()"
+      [isArchived]="isArchived()"
+      (archiveOrUnarchive)="archiveOrUnarchive()"
+      [canDeactivate]="canDeactivate.bind(this)"
+      [editMode]="editMode"
+      [showBackButton]="!editMode()"
+      [submitDisabled]="loading"
+      [title]="title()"
+      class="w-full"
+    ></app-detail-topbar>
+
+    <form [formGroup]="form" class="grid w-full grid-cols-1 gap-4 md:grid-cols-{{ entity.grid_cols }}">
+      {% for field in entity.fields -%}
+      <!-- {{ field.label }} -->
+      {% if field.conditional -%}
+      @if ({{ field.conditional }}) {
+      {% endif -%}
+      <app-{{ field.component_tag }}
+        {% if field.type -%}
+        type="{{ field.type }}"
+        {% endif -%}
+        {% if field.render -%}
+        render="{{ field.render }}"
+        {% endif -%}
+        [label]="tr.language().{{ field.label_key }}"
+        [isEditMode]="editMode"
+        [formControl]="{{ field.control_name }}"
+        {% if field.options -%}
+        [options]="{{ field.options }}()"
+        {% endif -%}
+        {% if field.errors -%}
+        [errors]="{{ field.errors }}"
+        {% endif -%}
+        {% if field.col_span -%}
+        class="col-span-{{ field.col_span }}"
+        {% endif -%}
+      ></app-{{ field.component_tag }}>
+      {% if field.conditional -%}
+      }
+      {% endif -%}
+      {% endfor -%}
+    </form>
+
+    {% if entity.has_related_sections -%}
+    <ng-container *ngIf="entityIdSignal() && entityIdSignal() !== 'new'">
+      {% for section in entity.related_sections -%}
+      <mat-divider></mat-divider>
+      <div class="flex min-h-[400px] w-full flex-col gap-2">
+        <mat-label>{{ '{{' }} tr.language().{{ section.label_key }} }}</mat-label>
+        <div class="h-[{{ section.height }}px] w-full">
+          <{{ section.component }}
+            {% for param in section.params -%}
+            [{{ param.name }}]="{{ param.value }}"
+            {% endfor -%}
+          ></{{ section.component }}>
+        </div>
+      </div>
+      {% endfor -%}
+    </ng-container>
+    {% endif -%}
+  </div>
+</div>

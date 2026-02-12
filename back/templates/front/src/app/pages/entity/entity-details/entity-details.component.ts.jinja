@@ -1,0 +1,188 @@
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
+import { firstValueFrom, Observable } from 'rxjs';
+import { {{ entity.input_model }}, {{ entity.output_model }} } from '../../api/models';
+import { {{ entity.service_name }} } from '../../api/services';
+import { DetailTopbarComponent } from '../../components/detail-topbar/detail-topbar.component';
+import { Option } from '../../components/fields/custom-types';
+{% for field in entity.fields -%}
+{% if field.component -%}
+import { {{ field.component }} } from '../../components/fields/{{ field.component_path }}/{{ field.component_file }}';
+{% endif -%}
+{% endfor -%}
+import { ErrorMessageComponent } from '../../components/fields/error-message/error-message.component';
+import { AbstractForm } from '../abstract-form.component';
+import { RequestConfirmationDialogComponent } from '../../components/request-confirmation-dialog.component';
+
+@Component({
+  selector: 'app-{{ entity.name_kebab }}-details',
+  templateUrl: './{{ entity.name_kebab }}-details.component.html',
+  styleUrls: ['./{{ entity.name_kebab }}-details.component.scss'],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatLabel,
+    ReactiveFormsModule,
+    DetailTopbarComponent,
+    ErrorMessageComponent,
+    {% for field in entity.fields -%}
+    {% if field.component -%}
+    {{ field.component }},
+    {% endif -%}
+    {% endfor -%}
+  ],
+})
+export class {{ entity.name_pascal }}DetailsComponent extends AbstractForm<{{ entity.input_model }}, {{ entity.output_model }}> {
+  {{ entity.name_camel }}Service = inject({{ entity.service_name }});
+  matDialog = inject(MatDialog);
+
+  // AbstractForm properties
+  override entityListRouteName = ['{{ entity.route_name }}'];
+  override entityRouteName = ['{{ entity.route_name }}'];
+  override onCreateSuccessMessage = this.tr.language().{{ entity.name_upper }}_CREATED;
+  override onCreateErrorMessage = this.tr.language().ERROR;
+  override onUpdateSuccessMessage = this.tr.language().{{ entity.name_upper }}_UPDATED;
+  override onUpdateErrorMessage = this.tr.language().ERROR;
+  override onArchivedMessage = this.tr.language().{{ entity.name_upper }}_ARCHIVED;
+  override onUnarchivedMessage = this.tr.language().{{ entity.name_upper }}_UNARCHIVED;
+  override onArchivedErrorMessage = this.tr.language().{{ entity.name_upper }}_ARCHIVED;
+  override onUnarchivedErrorMessage = this.tr.language().{{ entity.name_upper }}_UNARCHIVED;
+
+  // Form Controls
+  {% for field in entity.fields -%}
+  {{ field.control_name }} = new FormControl{% if field.type_params %}<{{ field.type_params }}>{% endif %}({{ field.default_value }}, {{ field.validators }});
+  {% endfor -%}
+
+  {% if entity.has_options -%}
+  // Options
+  {% for option in entity.options -%}
+  {{ option.name }} = signal<{{ option.type }}[]>([]);
+  {% endfor -%}
+  {% endif -%}
+
+  // Dynamic title
+  override title = computed(() => {
+    const entity = this.entitySignal();
+    if (this.isNew()) return this.tr.language().NEW_{{ entity.name_upper }};
+    {% if entity.title_expression -%}
+    const title = {{ entity.title_expression }};
+    {% else -%}
+    const title = entity?.{{ entity.display_field }} ?? '';
+    {% endif -%}
+    return this.editMode() ? `${this.tr.language().EDIT_{{ entity.name_upper }}} - ${title}` : title;
+  });
+
+  constructor() {
+    super();
+    this.form = this.fb.group({
+      archivedAt: this.archivedAtControl,
+      {% for field in entity.fields -%}
+      {{ field.form_name }}: this.{{ field.control_name }},
+      {% endfor -%}
+    });
+
+    {% if entity.has_options -%}
+    // Load options
+    {% for option in entity.options -%}
+    this.fetch{{ option.method }}();
+    {% endfor -%}
+    {% endif -%}
+
+    {% if entity.has_dynamic_logic -%}
+    // Dynamic logic
+    {% for logic in entity.dynamic_logic -%}
+    this.{{ logic.control }}.valueChanges.subscribe((value) => {
+      {{ logic.code }}
+    });
+    {% endfor -%}
+    {% endif -%}
+  }
+
+  {% if entity.has_options -%}
+  {% for option in entity.options -%}
+  async fetch{{ option.method }}() {
+    const data = await firstValueFrom(this.{{ option.service }}.{{ option.service_method }}());
+    {% if option.map_function -%}
+    this.{{ option.name }}.set(this.{{ option.map_function }}(data));
+    {% else -%}
+    this.{{ option.name }}.set(data);
+    {% endif -%}
+  }
+  {% endfor -%}
+  {% endif -%}
+
+  override setForm(entity: {{ entity.output_model }}) {
+    this.form.patchValue({
+      archivedAt: entity.archivedAt,
+      {% for field in entity.fields -%}
+      {{ field.form_name }}: {{ field.patch_value }},
+      {% endfor -%}
+    });
+  }
+
+  override getEntityInput(): {{ entity.input_model }} {
+    return {
+      archivedAt: this.archivedAtControl.value,
+      {% for field in entity.fields -%}
+      {{ field.input_field }}: {{ field.input_value }},
+      {% endfor -%}
+      id: this.entityIdSignal(),
+    };
+  }
+
+  override getById(id: string): Observable<{{ entity.output_model }}> {
+    return this.{{ entity.name_camel }}Service.{{ entity.api_method_get }}({ id });
+  }
+
+  override async createEntity(body: {{ entity.input_model }}): Promise<string> {
+    return await firstValueFrom(this.{{ entity.name_camel }}Service.{{ entity.api_method_create }}({ body }));
+  }
+
+  override async updateEntity(id: string, body: {{ entity.input_model }}): Promise<{{ entity.output_model }}> {
+    return await firstValueFrom(this.{{ entity.name_camel }}Service.{{ entity.api_method_update }}({ id, body }));
+  }
+
+  override async archiveOrUnarchiveEntity(id: string): Promise<void> {
+    try {
+      const message = !this.isArchived() 
+        ? this.tr.language().{{ entity.name_upper }}_ARCHIVE_CONFIRM
+        : this.tr.language().{{ entity.name_upper }}_UNARCHIVE_CONFIRM;
+      const title = !this.isArchived() 
+        ? this.tr.language().ARCHIVE 
+        : this.tr.language().UNARCHIVE;
+
+      const dialogRef = this.matDialog.open(RequestConfirmationDialogComponent, {
+        data: { title, message },
+      });
+      
+      const confirmed = await firstValueFrom(dialogRef.afterClosed());
+      if (!confirmed) return;
+
+      if (!this.isArchived()) {
+        await firstValueFrom(this.{{ entity.name_camel }}Service.{{ entity.api_method_delete }}({ id }));
+      } else {
+        await firstValueFrom(this.{{ entity.name_camel }}Service.{{ entity.api_method_restore }}({ id }));
+      }
+    } catch (error: any) {
+      this.toastr.error(this.tr.get(error.error), this.onArchivedErrorMessage);
+    }
+  }
+
+  {% if entity.has_mapping_functions -%}
+  // Mapping functions
+  {% for mapping in entity.mapping_functions -%}
+  private {{ mapping.name }}({{ mapping.params }}): {{ mapping.return_type }} {
+    {{ mapping.code }}
+  }
+  {% endfor -%}
+  {% endif -%}
+}

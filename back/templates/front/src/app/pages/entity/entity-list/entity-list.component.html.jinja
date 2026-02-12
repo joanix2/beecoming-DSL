@@ -1,0 +1,18 @@
+<div class="grid h-full grid-cols-1 grid-rows-[auto_1fr] gap-6">
+  <app-header-list
+    [searchTitle]="translateService.language().SEARCH_WITH_DOTS"
+    [searchPlaceholderInput]="translateService.language().{{ entity.search_placeholder_key }}"
+    [textButton]="translateService.language().{{ entity.new_button_key }}"
+    (onCreateClick)="goTo{{ entity.name_pascal }}Details('new')"
+    (onInputChange)="onSearchInput($event)"
+  ></app-header-list>
+  <app-datagrid
+    #datagrid
+    (rowClick)="goTo{{ entity.name_pascal }}Details($event.id ?? '')"
+    [columnDefs]="columnDefs()"
+    [data]="{{ entity.name_camel }}Signal()?.value ?? []"
+    [fetchParamsSignal]="fetchParamsSignal"
+    [rowCountSignal]="{{ entity.name_camel }}Count"
+    datagridName="{{ entity.datagrid_name }}"
+  ></app-datagrid>
+</div>
