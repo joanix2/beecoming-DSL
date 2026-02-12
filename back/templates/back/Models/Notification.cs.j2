@@ -1,0 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace {{ project_name }}_api.Models;
+
+public class Notification
+{
+       
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; }
+    public Guid DestinataireId { get; set; }
+    public string Title { get; set; }
+    public string Message { get; set; }
+    public string TargetLink { get; set; }
+    public DateTime? SeenAt { get; set; }
+    public DateTime? ArchivedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
+}

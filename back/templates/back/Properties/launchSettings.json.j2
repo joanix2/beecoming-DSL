@@ -1,0 +1,41 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "environmentVariables": {
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5088"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ENVIRONMENT": "dev",
+        "FRONT_URL": "http://localhost:4200",
+        "POSTGRES_HOST": "localhost",
+        "POSTGRES_DB": "{{ project_name }}",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "beecoming",
+        "POSTGRES_PORT": "5432",
+        "SMTP_HOST": "beecoming.mail.protection.outlook.com",
+        "SMTP_FROM": "{{ project_name }} <noreply@beecoming.fr>",
+        "SMTP_PASSWORD": "",
+        "SMTP_PORT": "25",
+        "JWT_KEY": "DzMJHq9aHv5w8hKkg2Z8NulvRcMVU0AcKIIumUbbhprLExkWmyiwzqDkWF3YoDgm",
+        "JWT_ISSUER": "https://api.{{ project_name }}.bee-dev.fr",
+        "JWT_AUDIENCE": "https://api.{{ project_name }}.bee-dev.fr",
+        "MINIO_URL": "api.minio.{{ project_name }}.bee-dev.fr",
+        "MINIO_ACCESSKEY": "v4cc83HdQZRBWmUziXSf",
+        "MINIO_SECRETKEY": "F6Pu8Tu5ZzjKdK9XS3U9szrvQs6nbdpgLuT33KF5",
+        "MINIO_BUCKETNAME": "{{ project_name }}-files",
+        "GEOAPIFY_KEY": "ca41027ee807403f86c188d22da146f9"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7102;http://localhost:7103;http://10.0.0.124",
+      //"applicationUrl": "https://localhost:7102;http://localhost:7103;http://192.168.1.13"      
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
+}

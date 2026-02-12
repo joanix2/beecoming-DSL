@@ -1,0 +1,51 @@
+﻿using Microsoft.AspNetCore.Identity;
+using {{ project_name }}_api;
+using {{ project_name }}_api.Models;
+
+namespace data_lib.Utility;
+
+/// <summary>
+/// Initialisation des données de base pour l'application
+/// </summary>
+public static class DataInitializer
+{
+    /// <summary>
+    /// Crée un utilisateur administrateur par défaut si aucun utilisateur n'existe
+    /// </summary>
+    public static async Task SeedDefaultAdmin(IServiceProvider serviceProvider)
+    {
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+        // Créer le rôle Admin s'il n'existe pas
+        if (!await roleManager.RoleExistsAsync("Admin"))
+        {
+            var adminRole = new ApplicationRole
+            {
+                Id = Guid.NewGuid(),
+                Name = "Admin",
+                Color = "#FF0000",
+                NormalizedName = "ADMIN"
+            };
+            await roleManager.CreateAsync(adminRole);
+        }
+
+        // Créer l'utilisateur admin par défaut
+        var adminEmail = "admin@example.com";
+        if (await userManager.FindByEmailAsync(adminEmail) == null)
+        {
+            var adminUser = new ApplicationUser
+            {
+                Id = Guid.NewGuid(),
+                UserName = "admin",
+                Email = adminEmail,
+                EmailConfirmed = true,
+                Firstname = "Admin",
+                Lastname = "System"
+            };
+            
+            await userManager.CreateAsync(adminUser, "Admin123!");
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}

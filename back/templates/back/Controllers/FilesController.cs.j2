@@ -1,0 +1,188 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using {{ project_name }}_api.DTOs;
+using {{ project_name }}_api.Services;
+
+namespace {{ project_name }}_api.Controllers;
+
+/// <summary>
+///     Controller to manage files
+/// </summary>
+[ApiController]
+[Route("[controller]")]
+[Produces("application/json")]
+[Consumes("application/json")]
+[Authorize]
+public class FilesController(MinioService minioService, ApplicationDbContext dbContext) : ControllerBase
+{
+    #region Upload File Async
+
+    /// <summary>
+    ///     Upload a file to the Minio server
+    /// </summary>
+    [HttpPost]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<FileUrlResponse>> UploadFileAsync(IFormFile file, string minioFolderName,
+        string entityId)
+    {
+        var filePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var metadata = new Dictionary<string, string>
+        {
+            { "Content-Type", file.ContentType },
+            { "x-amz-meta-content-disposition", "inline" }
+        };
+
+        var fileName = $"{minioFolderName}/{entityId}/{file.FileName}";
+        var response = await minioService.UploadFileAsync(fileName, filePath, metadata);
+        var url = await minioService.GetFileUrlAsync(response.ObjectName);
+
+        try
+        {
+            // Clean up the temporary file
+            System.IO.File.Delete(filePath);
+        }
+        catch (IOException)
+        {
+            // Handle the case where the file is already deleted or in use
+            Console.WriteLine($"Could not delete temporary file: {filePath}");
+        }
+
+
+        return new FileUrlResponse { Url = url};
+    }
+
+    public async Task<FileInfoResponse> UploadFileAndGetInfoAsync(IFormFile file, string minioFolderName,
+    string entityId)
+    {
+        var filePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var metadata = new Dictionary<string, string>
+        {
+            { "Content-Type", file.ContentType },
+            { "x-amz-meta-content-disposition", "inline" }
+        };
+
+        var fileName = $"{minioFolderName}/{entityId}/{file.FileName}";
+        var response = await minioService.UploadFileAsync(fileName, filePath, metadata);
+        var url = await minioService.GetFileUrlAsync(response.ObjectName);
+
+        try
+        {
+            // Clean up the temporary file
+            System.IO.File.Delete(filePath);
+        }
+        catch (IOException)
+        {
+            // Handle the case where the file is already deleted or in use
+            Console.WriteLine($"Could not delete temporary file: {filePath}");
+        }
+
+
+        return new FileInfoResponse { Url = url, Name = response.ObjectName, UploadDate = DateTimeOffset.Now };
+    }
+
+
+    #endregion
+
+
+    #region Download File
+
+    /// <summary>
+    ///     Download a file from the Minio server
+    /// </summary>
+    [HttpGet("fileName")]
+    public async Task<IActionResult> DownloadFile(string fileName)
+    {
+        var downloadPath = Path.Combine(Path.GetTempPath(), fileName);
+        await minioService.DownloadFileAsync(fileName, downloadPath);
+
+        var fileBytes = await System.IO.File.ReadAllBytesAsync(downloadPath);
+        return File(fileBytes, "application/octet-stream", fileName);
+    }
+
+    #endregion
+
+    #region Get File URL
+
+    /// <summary>
+    ///     Get the URL of a file from the Minio server
+    /// </summary>
+    [HttpGet("url/{fileName}")]
+    public async Task<ActionResult<FileUrlResponse>> GetFileUrl(string fileName)
+    {
+        var url = await minioService.GetFileUrlAsync(fileName);
+        return Ok(new FileUrlResponse { Url = url });
+    }
+
+    #endregion
+
+    #region Delete File
+
+    /// <summary>
+    ///     Delete a file from the Minio server
+    /// </summary>
+    [HttpDelete("fileName")]
+    public async Task<IActionResult> DeleteFile(string fileName)
+    {
+        await minioService.RemoveFileAsync(fileName);
+        return Ok();
+    }
+
+    #endregion
+
+    #region Upload Setting Logo
+
+    /// <summary>
+    ///     Upload a logo to the Minio server
+    /// </summary>
+    [HttpPost("settings/logo")]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<FileUrlResponse>> UploadSettingLogo(IFormFile file)
+    {
+        var setting = await dbContext.Settings.FirstOrDefaultAsync();
+        if (setting == null) return NotFound("SETTING_NOT_FOUND");
+
+        var fileInfoResponse = await UploadFileAndGetInfoAsync(file, setting.MinioFolderName + "/logos", setting.Id.ToString());
+        if (fileInfoResponse == null) return BadRequest("FILE_UPLOAD_FAILED");
+
+        var url = await minioService.GetFileUrlAsync(fileInfoResponse.Name);
+        setting.ApplicationLogo = fileInfoResponse.Name;
+        await dbContext.SaveChangesAsync();
+
+        return new FileUrlResponse { Url = url};
+    }
+
+
+    /// <summary>
+    ///     Upload a logo to the Minio server
+    /// </summary>
+    [HttpPost("settings/flavicon")]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<FileUrlResponse>> UploadSettingFlavicon(IFormFile file)
+    {
+        var setting = await dbContext.Settings.FirstOrDefaultAsync();
+        if (setting == null) return NotFound("SETTING_NOT_FOUND");
+
+        var fileInfoResponse = await UploadFileAndGetInfoAsync(file, setting.MinioFolderName + "/flavicons", setting.Id.ToString());
+        if (fileInfoResponse == null) return BadRequest("FILE_UPLOAD_FAILED");
+
+        var url = await minioService.GetFileUrlAsync(fileInfoResponse.Name);
+
+        setting.ApplicationFlavicon = fileInfoResponse.Name;
+        await dbContext.SaveChangesAsync();
+
+        return new FileUrlResponse { Url = url };
+    }
+
+    #endregion
+}

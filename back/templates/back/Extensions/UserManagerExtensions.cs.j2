@@ -1,0 +1,48 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using {{ project_name }}_api.Controllers;
+using {{ project_name }}_api.EmailTemplates;
+using {{ project_name }}_api.Models;
+using {{ project_name }}_api.DTOs;
+using {{ project_name }}_api.Services;
+using {{ project_name }}_api.Utils;
+
+namespace {{ project_name }}_api.Extensions
+{
+    public static class UserManagerExtensions
+    {
+        /// <summary>
+        /// Envoie un e-mail de confirmation
+        /// </summary>
+        public static async Task SendEmailConfirmationLinkAsync(this UserManager<ApplicationUser> userManager,
+            IEmailService emailService,
+            ApplicationUser user,
+            HttpRequest request,
+            IUrlHelper urlHelper, string? password = null)
+        {
+            // Genere un jeton de confirmation d'e-mail pour l'utilisateur
+            var emailConfirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // Cree un lien de confirmation en utilisant le jeton genere
+            var confirmationLink = urlHelper.Action(
+                nameof(AuthController.ConfirmEmail),
+                "Auth",
+                new { userId = user.Id, token = emailConfirmationToken },
+                request.Scheme);
+
+            // Genere le corps de l'e-mail en utilisant un modele d'e-mail
+            string body = await EmailGenerator.GetConfirmEmailTemplateAsync(
+                confirmationLink ?? string.Empty,
+                password != null ? $"Votre mot de passe est : {password}" : string.Empty
+            );
+
+            // Envoie l'e-mail de confirmation si l'adresse e-mail de l'utilisateur n'est pas vide
+            if (!string.IsNullOrEmpty(user.Email))
+            {
+                await emailService.SendEmailAsync(user.Email, "Confirmez votre adresse e-mail", body);
+            }
+        }
+    }
+}
+

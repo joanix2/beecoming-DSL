@@ -1,0 +1,405 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using {{ project_name }}_api.Models;
+using {{ project_name }}_api.Utils;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.ComponentModel.DataAnnotations;
+using {{ project_name }}_api.Services;
+using System.Data;
+using {{ project_name }}_api.Extensions;
+using {{ project_name }}_api.EmailTemplates;
+using {{ project_name }}_api.DTOs;
+
+namespace {{ project_name }}_api.Controllers
+{
+    /// <summary>
+    /// Controller pour l'authentification
+    /// </summary>
+    [ApiController]
+    [Route("[controller]")]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public class AuthController(
+        ApplicationDbContext dbContext,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        IEmailService emailService
+        ) : ControllerBase
+    {
+        #region POST Login
+        /// <summary>
+        /// Connexion d'un utilisateur
+        /// </summary>
+        [HttpPost("login")]
+        public async Task<ActionResult<TokenOutput>> Login([FromBody] LoginInput loginInput)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await userManager.FindByEmailAsync(loginInput.Email);
+            if (user == null)
+                return Unauthorized(HardCode.WRONG_CREDENTIALS);
+            
+            var result = await signInManager.CheckPasswordSignInAsync(user, loginInput.Password, false);
+            if (!result.Succeeded)
+                return Unauthorized(HardCode.WRONG_CREDENTIALS);
+            
+            if (!await userManager.IsEmailConfirmedAsync(user))
+                return Unauthorized(HardCode.EMAIL_NEEDS_CONFIRMATION);
+
+            var roles = await userManager.GetRolesAsync(user);
+            var role = GetHighestPriorityRole(roles);
+            if (role == null || user.ArchivedAt != null)
+                return Unauthorized(HardCode.NOT_AUTHORIZED);
+
+            var accessToken = GenerateAccessToken(user, role);
+            var refreshToken = GenerateRefreshToken(user.Id, role);
+
+            await SaveRefreshTokenAsync(refreshToken);
+
+            return Ok(new TokenOutput
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token,
+            });
+        }
+        #endregion
+
+        #region POST RefreshToken
+        /// <summary>
+        /// Rafraîchir un token
+        /// </summary>
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<ActionResult<TokenOutput>> RefreshToken([FromBody] RefreshTokenInput refreshTokenInput)
+        {
+            var storedToken = await dbContext.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == refreshTokenInput.RefreshToken);
+            if (storedToken == null || storedToken.IsUsed || storedToken.IsRevoked || storedToken.Expires < DateTime.UtcNow)
+                return Unauthorized(HardCode.TOKEN_IS_INVALID);
+
+            // Marquer le token comme utilisé
+            storedToken.IsUsed = true;
+            dbContext.RefreshTokens.Update(storedToken);
+            await dbContext.SaveChangesAsync();
+
+            // Générer un nouveau token d'accès et un nouveau refresh token
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == storedToken.UserId);
+            if (user == null)
+                return Unauthorized(HardCode.TOKEN_IS_INVALID);
+
+            var roles = await userManager.GetRolesAsync(user);
+            var role = storedToken.Role;
+            var accessToken = GenerateAccessToken(user, role);
+            var newRefreshToken = GenerateRefreshToken(user.Id, role);
+            await SaveRefreshTokenAsync(newRefreshToken);
+            await AddNotifOnRefreshToken(user.Id);
+
+            return Ok(new TokenOutput
+            {
+                AccessToken = accessToken,
+                RefreshToken = newRefreshToken.Token
+            });
+        }
+        #endregion
+
+        #region POST RevokeToken
+        /// <summary>
+        /// Révoquer un token
+        /// </summary>
+        [HttpPost("revoke-token")]
+        public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenInput refreshTokenInput)
+        {
+            var storedToken = await dbContext.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == refreshTokenInput.RefreshToken);
+            if (storedToken == null)
+                return NotFound(HardCode.TOKEN_IS_INVALID);
+
+            storedToken.IsRevoked = true;
+            dbContext.RefreshTokens.Update(storedToken);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        #endregion
+
+
+        #region GenerateAccessToken
+        /// <summary>
+        /// Générer un token d'accès
+        /// </summary>
+        private string GenerateAccessToken(ApplicationUser user, string role)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.PreferredUsername, user.FullName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Role, role)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(EnvironmentVariables.JWT_KEY));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: EnvironmentVariables.JWT_ISSUER,
+                audience: EnvironmentVariables.JWT_AUDIENCE,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15), // Access token court-terme
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        #endregion
+
+        #region GenerateRefreshToken
+        /// <summary>
+        /// Générer un refresh token
+        /// </summary>
+        private RefreshToken GenerateRefreshToken(Guid userId, string role)
+        {
+            return new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                UserId = userId,
+                Role = role,
+                Expires = DateTime.UtcNow.AddDays(5), // Refresh token long-terme
+                IsUsed = false,
+                IsRevoked = false,
+                Created = DateTime.UtcNow,
+                Id = 0
+            };
+        }
+        #endregion
+
+        #region SaveRefreshTokenAsync
+        /// <summary>
+        /// Sauvegarder un refresh token
+        /// </summary>
+        private async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
+        {
+            dbContext.RefreshTokens.Add(refreshToken);
+            await dbContext.SaveChangesAsync();
+        }
+        #endregion
+        
+        #region AddNotifOnRefreshToken
+        /// <summary>
+        /// Ajouter une notification sur le refresh token
+        /// </summary>
+        /// <param name="userId"></param>
+        private async Task AddNotifOnRefreshToken(Guid userId)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return;
+
+            var notification = new Notification
+            {
+                DestinataireId = userId,
+                Title = "Session rafraîchie",
+                Message = "Votre session a été rafraîchie.",
+                TargetLink = "/admin/categories",
+            };
+
+            dbContext.Notifications.Add(notification);
+            await dbContext.SaveChangesAsync();
+        }
+        #endregion
+        #region POST Register
+        /// <summary>
+        /// Inscription d'un utilisateur
+        /// </summary>
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterInput registerInput)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (registerInput.Password != registerInput.ConfirmPassword)
+                return BadRequest(HardCode.PASSWORD_MISMATCH);
+
+            // Vérifier si l'email existe déjà
+            var existingUser = await userManager.FindByEmailAsync(registerInput.Email);
+            if (existingUser != null)
+                return Conflict(HardCode.EMAIL_IS_ALREADY_USED);
+
+            var user = new ApplicationUser(registerInput);
+
+            var res = await userManager.CreateAsync(user, registerInput.Password);
+
+            await userManager.SendEmailConfirmationLinkAsync(emailService, user, Request, Url);
+
+            return Ok(HardCode.REGISTER_CONFIRMATION);
+
+        }
+
+        #endregion
+
+        #region GET ConfirmEmail
+        /// <summary>
+        /// Valider l'adresse e-mail
+        /// </summary>
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+                return BadRequest(HardCode.TOKEN_IS_INVALID);
+
+            var user = await dbContext.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == Guid.Parse(userId));
+            
+            if (user == null)
+                return NotFound(HardCode.TOKEN_OR_USER_IS_INVALID);
+
+            var result = await userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+                return BadRequest("EMAIL_CONFIRMATION_FAILED");
+
+            return Redirect($"{EnvironmentVariables.FRONT_URL}/login?confirm-email=true");
+        }
+        #endregion
+
+        #region POST ForgotPassword
+        /// <summary>
+        /// Mot de passe oublié
+        /// </summary>
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<string>> ForgotPassword([FromBody] ForgotPasswordInput forgotPasswordInput)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await userManager.FindByEmailAsync(forgotPasswordInput.Email);
+            if (user == null)
+                return Ok(HardCode.FORGOT_PASSWORD_EMAIL_SENT);
+
+            // Générer un token de réinitialisation
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = $"{EnvironmentVariables.FRONT_URL}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(forgotPasswordInput.Email)}";
+
+            // Envoyer l'email (implémentation personnalisée)
+            string forgotEmail = await EmailGenerator.GetForgotPasswordTemplateAsync(resetLink);
+            if (string.IsNullOrEmpty(user.Email))
+                return BadRequest(HardCode.EMAIL_IS_REQUIRED);
+
+            await emailService.SendEmailAsync(user.Email, "Réinitialisation du mot de passe", forgotEmail);
+
+            return Ok(HardCode.FORGOT_PASSWORD_EMAIL_SENT);
+        }
+        #endregion
+
+        #region POST ResetPassword
+        /// <summary>
+        /// Réinitialiser le mot de passe
+        /// </summary>
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordInput resetPasswordInput)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (resetPasswordInput.NewPassword != resetPasswordInput.NewPasswordConfirmation)
+                return BadRequest(HardCode.PASSWORD_MISMATCH);
+
+            var user = await userManager.FindByEmailAsync(resetPasswordInput.Email);
+            if (user == null)
+                return BadRequest(HardCode.TOKEN_OR_USER_IS_INVALID);
+
+            // Réinitialiser le mot de passe
+            var result = await userManager.ResetPasswordAsync(user, resetPasswordInput.Token, resetPasswordInput.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return BadRequest(errors);
+            }
+
+            return Ok(HardCode.PASSWORD_RESET_SUCCESS);
+        }
+        #endregion
+
+        #region GET Me
+        /// <summary>
+        /// Récupérer les informations de l'utilisateur connecté
+        /// </summary>
+        //[Authorize(Roles = "Admin")]
+        [HttpGet("me")]
+        public async Task<ActionResult<UserInfoOutput>> GetCurrentUser()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentRole = User.FindFirstValue(ClaimTypes.Role);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+            
+            return Ok(new UserInfoOutput()
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Role = roles.FirstOrDefault(r => r == currentRole)
+            });
+        }
+        #endregion
+
+
+        #region Get Request new email confirmation link
+        /// <summary>
+        /// Demander un nouveau lien de confirmation par e-mail
+        /// </summary>
+        [HttpGet("request-email-confirmation")]
+        public async Task<ActionResult<string>> RequestEmailConfirmationLink(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest(HardCode.EMAIL_IS_REQUIRED);
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound(HardCode.USER_NOT_FOUND);
+            await userManager.SendEmailConfirmationLinkAsync(emailService, user, Request, Url);
+            return Ok(HardCode.EMAIL_CONFIRMATION_SENT);
+        }
+        #endregion
+
+        #region GetHighestPriorityRole
+        /// <summary>
+        /// Récupère le rôle avec la priorité la plus élevée parmi les rôles de l'utilisateur
+        /// L'ordre de priorité est défini dans HardCode.ROLE_LABELS (Supervisor > TeamLeader > Operator)
+        /// </summary>
+        private static string? GetHighestPriorityRole(IList<string> userRoles)
+        {
+            if (userRoles == null || !userRoles.Any())
+                return null;
+
+            // Parcourir les rôles par ordre de priorité (tel que défini dans HardCode.ROLE_LABELS)
+            foreach (var priorityRole in HardCode.ROLE_LABELS)
+            {
+                if (userRoles.Contains(priorityRole, StringComparer.OrdinalIgnoreCase))
+                {
+                    return priorityRole;
+                }
+            }
+
+            return null;
+        }
+        #endregion
+
+
+    }
+}

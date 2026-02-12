@@ -1,0 +1,120 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using {{ project_name }}_api.DTOs;
+using {{ project_name }}_api.Models;
+
+namespace {{ project_name }}_api.Controllers
+{
+    /// <summary>
+    /// Controller pour les notifications
+    /// </summary>
+    /// <param name="dbContext"></param>
+    [ApiController]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [Route("[controller]")]
+    [Authorize]
+    public class NotificationsController(ApplicationDbContext dbContext) : ControllerBase
+    {
+            #region SSE GET count
+            /// <summary>
+            /// Récupère le nombre de notifications non lues et non archivées pour un utilisateur
+            /// </summary>
+            /// <param name="id"></param>
+            /// <param name="cancellationToken"></param>
+            [HttpGet("{id}/count")]
+            [Produces("text/event-stream")]
+            [AllowAnonymous]
+            public async Task GetCount(Guid id, CancellationToken cancellationToken)
+            {
+            /*
+                Response.ContentType = "text/event-stream";
+                // Envoi d'une notification toutes les 5 secondes tant que la connexion est ouverte
+                try
+                {
+                    var lastNotificationCount = 0;
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        var count = await dbContext.Notifications.CountAsync(n => n.DestinataireId == id && n.SeenAt == null && n.ArchivedAt == null, cancellationToken);
+                        
+                        if(count != lastNotificationCount)
+                        {
+                            await Response.WriteAsync($"data: {count}\n\n", cancellationToken);
+                            await Response.Body.FlushAsync(cancellationToken);
+                            lastNotificationCount = count;
+                        }
+
+                        await Task.Delay(5000, cancellationToken);
+                    }
+                }
+                catch (TaskCanceledException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            */
+            return ;
+            }
+            
+            #endregion
+
+            #region GET all notifications for userId
+            /// <summary>
+            /// Récupère les notifications et non archivées pour un utilisateur
+            /// </summary>
+            /// <param name="userId"></param>
+            [HttpGet("{userId}")]
+            public async Task<ActionResult<List<NotificationOutput>>> Get(Guid userId)
+            {
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                List<Notification> notifications = await dbContext.Notifications.Where(n => n.DestinataireId == userId && n.ArchivedAt == null).ToListAsync();
+                return Ok(notifications.Select(n => new NotificationOutput(n)));
+            }
+            #endregion
+            
+            #region PUT Notification SeenAt
+            /// <summary>
+            /// Récupère les notifications non lues et non archivées pour un utilisateur
+            /// </summary>
+            /// <param name="notificationId"></param>
+            [HttpPut("{notificationId}")]
+            public async Task<ActionResult<NotificationOutput>> PutSeenAt(Guid notificationId)
+            {
+                var notification = await dbContext.Notifications.FirstOrDefaultAsync(n => n.Id == notificationId);
+                if (notification == null)
+                {
+                    return NotFound();
+                }
+
+                notification.SeenAt = notification.SeenAt != null ? null : DateTime.UtcNow;
+
+                await dbContext.SaveChangesAsync();
+                return Ok(new NotificationOutput(notification));
+            }
+
+            #endregion
+            #region DELETE Archive Notification
+
+            /// <summary>
+            /// Archive une notification
+            /// </summary>
+            /// <param name="notificationId"></param>
+            [HttpDelete("{notificationId}")]
+            public async Task<ActionResult<NotificationOutput>> Archive(Guid notificationId)
+            {
+                Notification? notification = await dbContext.Notifications.FirstOrDefaultAsync(n => n.Id == notificationId);
+                if (notification == null)
+                {
+                    return NotFound();
+                }
+                notification.ArchivedAt = DateTime.Now.ToUniversalTime();
+                await dbContext.SaveChangesAsync();
+                return Ok(new NotificationOutput(notification));
+            }
+            #endregion
+    }
+}

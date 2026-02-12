@@ -1,0 +1,21 @@
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using {{ project_name }}_api.Models;
+using {{ project_name }}_api.DTOs;
+
+namespace {{ project_name }}_api.Extensions
+{
+    public static class RoleQueryableExtensions
+    {
+        /// <summary>
+        /// Filtre les rôles en fonction de la liste cible et les transforme en DTO.
+        /// </summary>
+        public static IQueryable<ApplicationRole> FilterRoles(this IQueryable<ApplicationRole> roles,
+            string[]? targetRoles = null)
+        {
+            return roles
+                .AsNoTracking()
+                .Where(r => targetRoles != null ? targetRoles.Contains(r.Name.ToLower()) : true);
+        }
+    }
+}
