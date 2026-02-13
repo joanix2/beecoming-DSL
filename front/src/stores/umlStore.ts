@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import type { UMLClass, UMLRelation, UMLDiagram, UMLAttribute, UMLMethod, ChatMessage, Visibility } from '@/types/uml';
+import { DEFAULT_CLASSES, isDefaultClass } from '@/lib/defaultClasses';
 
 interface HistoryEntry {
   classes: UMLClass[];
@@ -71,12 +72,12 @@ const pushHistory = (state: { classes: UMLClass[]; relations: UMLRelation[]; his
 };
 
 export const useUMLStore = create<UMLStore>((set, get) => ({
-  classes: [],
+  classes: [...DEFAULT_CLASSES],
   relations: [],
   selectedClassId: null,
   selectedRelationId: null,
   chatMessages: [],
-  history: [{ classes: [], relations: [] }],
+  history: [{ classes: [...DEFAULT_CLASSES], relations: [] }],
   historyIndex: 0,
 
   addClass: (name?: string, x?: number, y?: number) => {
@@ -99,6 +100,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   updateClass: (id, updates) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(id)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => (c.id === id ? { ...c, ...updates } : c));
       const newState = { classes, relations: s.relations, history: s.history, historyIndex: s.historyIndex };
@@ -108,6 +114,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   removeClass: (id) => {
+    // Prevent deleting default classes
+    if (isDefaultClass(id)) {
+      console.warn('Cannot delete default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.filter((c) => c.id !== id);
       const relations = s.relations.filter((r) => r.sourceId !== id && r.targetId !== id);
@@ -126,6 +137,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   addAttribute: (classId) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(classId)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => {
         if (c.id !== classId) return c;
@@ -139,6 +155,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   updateAttribute: (classId, attrId, updates) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(classId)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => {
         if (c.id !== classId) return c;
@@ -151,6 +172,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   removeAttribute: (classId, attrId) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(classId)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => {
         if (c.id !== classId) return c;
@@ -163,6 +189,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   addMethod: (classId) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(classId)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => {
         if (c.id !== classId) return c;
@@ -176,6 +207,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   updateMethod: (classId, methodId, updates) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(classId)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => {
         if (c.id !== classId) return c;
@@ -188,6 +224,11 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
   },
 
   removeMethod: (classId, methodId) => {
+    // Prevent modifying default classes
+    if (isDefaultClass(classId)) {
+      console.warn('Cannot modify default class');
+      return;
+    }
     set((s) => {
       const classes = s.classes.map((c) => {
         if (c.id !== classId) return c;
@@ -274,8 +315,12 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
 
   importDiagram: (diagram) => {
     set((s) => {
+      // Filter out any default classes from imported data to avoid duplicates
+      const importedClasses = (diagram.classes || []).filter(c => !isDefaultClass(c.id));
+      // Always include default classes
+      const allClasses = [...DEFAULT_CLASSES, ...importedClasses];
       const newState = {
-        classes: diagram.classes || [],
+        classes: allClasses,
         relations: diagram.relations || [],
         history: s.history,
         historyIndex: s.historyIndex,
@@ -300,10 +345,14 @@ export const useUMLStore = create<UMLStore>((set, get) => ({
       if (!data) return false;
       const parsed = JSON.parse(data) as UMLDiagram;
       if (parsed.classes) {
+        // Filter out any default classes from saved data to avoid duplicates
+        const savedClasses = parsed.classes.filter(c => !isDefaultClass(c.id));
+        // Always include default classes
+        const allClasses = [...DEFAULT_CLASSES, ...savedClasses];
         set({
-          classes: parsed.classes,
+          classes: allClasses,
           relations: parsed.relations || [],
-          history: [{ classes: parsed.classes, relations: parsed.relations || [] }],
+          history: [{ classes: allClasses, relations: parsed.relations || [] }],
           historyIndex: 0,
         });
         return true;

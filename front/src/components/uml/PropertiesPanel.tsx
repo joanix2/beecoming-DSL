@@ -2,9 +2,10 @@ import { useUMLStore } from '@/stores/umlStore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, Plus, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { useState } from 'react';
 import type { Visibility, RelationType } from '@/types/uml';
+import { isDefaultClass } from '@/lib/defaultClasses';
 
 export default function PropertiesPanel() {
   const {
@@ -69,12 +70,29 @@ export default function PropertiesPanel() {
 
   if (!selectedClass) return null;
 
+  const isDefault = isDefaultClass(selectedClass.id);
+
   return (
     <div className="p-3 space-y-3 overflow-y-auto max-h-full">
       {/* Class header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-primary font-mono">Classe</h3>
-        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => removeClass(selectedClass.id)}>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-bold text-primary font-mono">Classe</h3>
+          {isDefault && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/30">
+              <Lock className="h-3 w-3 text-yellow-500" />
+              <span className="text-[9px] text-yellow-500 font-mono">default</span>
+            </div>
+          )}
+        </div>
+        <Button 
+          size="icon" 
+          variant="ghost" 
+          className="h-7 w-7 text-destructive" 
+          onClick={() => removeClass(selectedClass.id)}
+          disabled={isDefault}
+          title={isDefault ? "Cannot delete default class" : "Delete class"}
+        >
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
@@ -85,6 +103,7 @@ export default function PropertiesPanel() {
           onChange={(e) => updateClass(selectedClass.id, { name: e.target.value })}
           className="h-8 text-xs font-mono font-bold bg-secondary border-border"
           placeholder="Nom de la classe"
+          disabled={isDefault}
         />
         <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
           <input
@@ -92,6 +111,7 @@ export default function PropertiesPanel() {
             checked={selectedClass.isAbstract}
             onChange={(e) => updateClass(selectedClass.id, { isAbstract: e.target.checked })}
             className="accent-primary"
+            disabled={isDefault}
           />
           Abstract
         </label>
@@ -107,7 +127,11 @@ export default function PropertiesPanel() {
           <div className="mt-1 space-y-1">
             {selectedClass.attributes.map((attr) => (
               <div key={attr.id} className="flex items-center gap-1">
-                <Select value={attr.visibility} onValueChange={(v) => updateAttribute(selectedClass.id, attr.id, { visibility: v as Visibility })}>
+                <Select 
+                  value={attr.visibility} 
+                  onValueChange={(v) => updateAttribute(selectedClass.id, attr.id, { visibility: v as Visibility })}
+                  disabled={isDefault}
+                >
                   <SelectTrigger className="h-7 w-10 text-[10px] font-mono bg-secondary border-border p-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -121,18 +145,32 @@ export default function PropertiesPanel() {
                   value={attr.name}
                   onChange={(e) => updateAttribute(selectedClass.id, attr.id, { name: e.target.value })}
                   className="h-7 text-[10px] font-mono bg-secondary border-border flex-1"
+                  disabled={isDefault}
                 />
                 <Input
                   value={attr.type}
                   onChange={(e) => updateAttribute(selectedClass.id, attr.id, { type: e.target.value })}
                   className="h-7 w-16 text-[10px] font-mono bg-secondary border-border"
+                  disabled={isDefault}
                 />
-                <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive shrink-0" onClick={() => removeAttribute(selectedClass.id, attr.id)}>
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-6 w-6 text-destructive shrink-0" 
+                  onClick={() => removeAttribute(selectedClass.id, attr.id)}
+                  disabled={isDefault}
+                >
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
             ))}
-            <Button variant="ghost" size="sm" className="h-6 text-[10px] text-primary" onClick={() => addAttribute(selectedClass.id)}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 text-[10px] text-primary" 
+              onClick={() => addAttribute(selectedClass.id)}
+              disabled={isDefault}
+            >
               <Plus className="h-3 w-3 mr-1" /> Attribut
             </Button>
           </div>
@@ -150,7 +188,11 @@ export default function PropertiesPanel() {
             {selectedClass.methods.map((method) => (
               <div key={method.id} className="space-y-1 p-1.5 rounded bg-secondary/50">
                 <div className="flex items-center gap-1">
-                  <Select value={method.visibility} onValueChange={(v) => updateMethod(selectedClass.id, method.id, { visibility: v as Visibility })}>
+                  <Select 
+                    value={method.visibility} 
+                    onValueChange={(v) => updateMethod(selectedClass.id, method.id, { visibility: v as Visibility })}
+                    disabled={isDefault}
+                  >
                     <SelectTrigger className="h-7 w-10 text-[10px] font-mono bg-secondary border-border p-1">
                       <SelectValue />
                     </SelectTrigger>
@@ -164,13 +206,21 @@ export default function PropertiesPanel() {
                     value={method.name}
                     onChange={(e) => updateMethod(selectedClass.id, method.id, { name: e.target.value })}
                     className="h-7 text-[10px] font-mono bg-secondary border-border flex-1"
+                    disabled={isDefault}
                   />
                   <Input
                     value={method.returnType}
                     onChange={(e) => updateMethod(selectedClass.id, method.id, { returnType: e.target.value })}
                     className="h-7 w-14 text-[10px] font-mono bg-secondary border-border"
+                    disabled={isDefault}
                   />
-                  <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive shrink-0" onClick={() => removeMethod(selectedClass.id, method.id)}>
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="h-6 w-6 text-destructive shrink-0" 
+                    onClick={() => removeMethod(selectedClass.id, method.id)}
+                    disabled={isDefault}
+                  >
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
@@ -179,10 +229,17 @@ export default function PropertiesPanel() {
                   onChange={(e) => updateMethod(selectedClass.id, method.id, { parameters: e.target.value })}
                   className="h-6 text-[10px] font-mono bg-secondary border-border"
                   placeholder="param: Type, ..."
+                  disabled={isDefault}
                 />
               </div>
             ))}
-            <Button variant="ghost" size="sm" className="h-6 text-[10px] text-primary" onClick={() => addMethod(selectedClass.id)}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 text-[10px] text-primary" 
+              onClick={() => addMethod(selectedClass.id)}
+              disabled={isDefault}
+            >
               <Plus className="h-3 w-3 mr-1" /> Méthode
             </Button>
           </div>

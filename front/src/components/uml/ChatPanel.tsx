@@ -2,8 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useUMLStore } from '@/stores/umlStore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
 import type { RelationType } from '@/types/uml';
+import { apiClient } from '@/lib/api';
+import type { UMLDiagram } from '@/types/uml';
+import { toast } from 'sonner';
 
 function processChatCommand(input: string, store: ReturnType<typeof useUMLStore.getState>): string {
   const lower = input.toLowerCase().trim();
@@ -105,8 +108,10 @@ function processChatCommand(input: string, store: ReturnType<typeof useUMLStore.
 
 export default function ChatPanel() {
   const [input, setInput] = useState('');
+  const [useAI, setUseAI] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesRef = useRef<HTMLDivElement>(null);
-  const { chatMessages, addChatMessage } = useUMLStore();
+  const { chatMessages, addChatMessage, importDiagram, exportDiagram } = useUMLStore();
 
   useEffect(() => {
     if (messagesRef.current) {
@@ -114,18 +119,106 @@ export default function ChatPanel() {
     }
   }, [chatMessages]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    addChatMessage({ role: 'user', content: input.trim() });
-
-    const store = useUMLStore.getState();
-    const response = processChatCommand(input.trim(), store);
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
     
-    setTimeout(() => {
-      addChatMessage({ role: 'assistant', content: response });
-    }, 300);
-
+    const userMessage = input.trim();
+    addChatMessage({ role: 'user', content: userMessage });
     setInput('');
+
+    if (useAI) {
+      // Use LLM API
+      setIsLoading(true);
+      try {
+        // Check if this is a request to generate UML from description
+        const isUMLGeneration = /\b(générer|créer|generate|create)\b.*\b(diagramme|diagram|uml|classe|class)/i.test(userMessage) ||
+                               /\b(diagramme|diagram|uml)\b.*\b(générer|créer|generate|create)/i.test(userMessage);
+
+        if (isUMLGeneration) {
+          // Generate JSON from natural language
+          const prompt = `Generate a valid UML class diagram JSON based on this description: "${userMessage}". 
+Return ONLY valid JSON matching this schema:
+{
+  "classes": [
+    {
+      "id": "unique-id",
+      "name": "ClassName",
+      "isAbstract": false,
+      "attributes": [
+        {
+          "id": "attr-id",
+          "visibility": "-",
+          "name": "attributeName",
+          "type": "String",
+          "isStatic": false
+        }
+      ],
+      "methods": [
+        {
+          "id": "method-id",
+          "visibility": "+",
+          "name": "methodName",
+          "returnType": "void",
+          "parameters": "",
+          "isStatic": false,
+          "isAbstract": false
+        }
+      ],
+      "x": 100,
+      "y": 100
+    }
+  ],
+  "relations": []
+}`;
+
+          const jsonResponse = await apiClient.generateJSON({
+            prompt,
+            context: { currentDiagram: exportDiagram() },
+          });
+
+          // Import the generated diagram
+          if (jsonResponse.classes && Array.isArray(jsonResponse.classes)) {
+            importDiagram(jsonResponse as UMLDiagram);
+            addChatMessage({ 
+              role: 'assistant', 
+              content: `✅ Diagramme UML généré avec ${jsonResponse.classes.length} classe(s). Le diagramme a été mis à jour.` 
+            });
+            toast.success('Diagramme UML généré');
+          } else {
+            throw new Error('Invalid JSON structure');
+          }
+        } else {
+          // Regular chat
+          let responseText = '';
+          for await (const chunk of apiClient.chatStream({
+            message: userMessage,
+            context: { diagram: exportDiagram() },
+          })) {
+            responseText += chunk;
+          }
+          
+          if (responseText) {
+            addChatMessage({ role: 'assistant', content: responseText });
+          }
+        }
+      } catch (error) {
+        console.error('AI error:', error);
+        addChatMessage({ 
+          role: 'assistant', 
+          content: `❌ Erreur: ${error instanceof Error ? error.message : 'API non disponible'}. Essayez le mode local.` 
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      // Use local command processing
+      const store = useUMLStore.getState();
+      const response = processChatCommand(userMessage, store);
+      
+      setTimeout(() => {
+        addChatMessage({ role: 'assistant', content: response });
+      }, 300);
+    }
   };
 
   return (
@@ -137,13 +230,14 @@ export default function ChatPanel() {
             <Bot className="h-8 w-8 mx-auto text-primary opacity-50" />
             <p className="font-mono">UML Bot</p>
             <p>Tapez <span className="font-mono text-primary">aide</span> pour voir les commandes</p>
+            <p className="text-[10px] mt-2">Mode {useAI ? 'IA' : 'Local'}</p>
           </div>
         )}
         {chatMessages.map((msg) => (
           <div key={msg.id} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'assistant' && (
-              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                <Bot className="h-3.5 w-3.5 text-primary" />
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${useAI ? 'bg-purple-500/20' : 'bg-primary/20'}`}>
+                {useAI ? <Sparkles className="h-3.5 w-3.5 text-purple-500" /> : <Bot className="h-3.5 w-3.5 text-primary" />}
               </div>
             )}
             <div
@@ -162,10 +256,32 @@ export default function ChatPanel() {
             )}
           </div>
         ))}
+        {isLoading && (
+          <div className="flex gap-2 justify-start">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${useAI ? 'bg-purple-500/20' : 'bg-primary/20'}`}>
+              <Loader2 className={`h-3.5 w-3.5 animate-spin ${useAI ? 'text-purple-500' : 'text-primary'}`} />
+            </div>
+            <div className="rounded-lg px-3 py-2 text-xs bg-secondary text-secondary-foreground font-mono">
+              Réflexion en cours...
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-border space-y-2">
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1.5 text-[10px] text-muted-foreground cursor-pointer">
+            <input
+              type="checkbox"
+              checked={useAI}
+              onChange={(e) => setUseAI(e.target.checked)}
+              className="accent-purple-500"
+            />
+            <Sparkles className="h-3 w-3 text-purple-500" />
+            IA
+          </label>
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -176,11 +292,12 @@ export default function ChatPanel() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ex: ajouter classe User"
+            placeholder={useAI ? "Ex: Génère un système de blog avec User, Post, Comment" : "Ex: ajouter classe User"}
             className="h-8 text-xs font-mono bg-secondary border-border flex-1"
+            disabled={isLoading}
           />
-          <Button type="submit" size="icon" className="h-8 w-8 shrink-0">
-            <Send className="h-3.5 w-3.5" />
+          <Button type="submit" size="icon" className="h-8 w-8 shrink-0" disabled={isLoading}>
+            {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
           </Button>
         </form>
       </div>
