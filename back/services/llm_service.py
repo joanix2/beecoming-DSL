@@ -41,7 +41,9 @@ Be concise and provide practical solutions."""),
     def _check_enabled(self):
         """Check if LLM service is enabled"""
         if not self.enabled:
-            raise ValueError("LLM service is not enabled. Please configure OPENAI_API_KEY.")
+            raise ValueError(
+                "LLM service is not enabled. Please set OPENAI_API_KEY in your environment variables or .env file."
+            )
     
     async def generate_json(self, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """

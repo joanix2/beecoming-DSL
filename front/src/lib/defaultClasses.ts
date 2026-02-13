@@ -1,5 +1,4 @@
 import type { UMLClass, UMLAttribute, UMLMethod } from '@/types/uml';
-import { v4 as uuidv4 } from 'uuid';
 
 // IDs for default classes (fixed to detect them)
 export const DEFAULT_CLASS_IDS = {
@@ -18,28 +17,28 @@ export const DEFAULT_CLASSES: UMLClass[] = [
     isAbstract: false,
     attributes: [
       {
-        id: uuidv4(),
+        id: 'default-user-id-attr',
         visibility: '-',
         name: 'id',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-user-username-attr',
         visibility: '-',
         name: 'username',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-user-email-attr',
         visibility: '-',
         name: 'email',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-user-password-attr',
         visibility: '-',
         name: 'password',
         type: 'String',
@@ -48,7 +47,7 @@ export const DEFAULT_CLASSES: UMLClass[] = [
     ],
     methods: [
       {
-        id: uuidv4(),
+        id: 'default-user-login-method',
         visibility: '+',
         name: 'login',
         returnType: 'boolean',
@@ -57,7 +56,7 @@ export const DEFAULT_CLASSES: UMLClass[] = [
         isAbstract: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-user-logout-method',
         visibility: '+',
         name: 'logout',
         returnType: 'void',
@@ -75,21 +74,21 @@ export const DEFAULT_CLASSES: UMLClass[] = [
     isAbstract: false,
     attributes: [
       {
-        id: uuidv4(),
+        id: 'default-role-id-attr',
         visibility: '-',
         name: 'id',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-role-name-attr',
         visibility: '-',
         name: 'name',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-role-permissions-attr',
         visibility: '-',
         name: 'permissions',
         type: 'String[]',
@@ -98,7 +97,7 @@ export const DEFAULT_CLASSES: UMLClass[] = [
     ],
     methods: [
       {
-        id: uuidv4(),
+        id: 'default-role-haspermission-method',
         visibility: '+',
         name: 'hasPermission',
         returnType: 'boolean',
@@ -116,35 +115,35 @@ export const DEFAULT_CLASSES: UMLClass[] = [
     isAbstract: false,
     attributes: [
       {
-        id: uuidv4(),
+        id: 'default-notification-id-attr',
         visibility: '-',
         name: 'id',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-notification-title-attr',
         visibility: '-',
         name: 'title',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-notification-message-attr',
         visibility: '-',
         name: 'message',
         type: 'String',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-notification-read-attr',
         visibility: '-',
         name: 'read',
         type: 'boolean',
         isStatic: false,
       },
       {
-        id: uuidv4(),
+        id: 'default-notification-createdat-attr',
         visibility: '-',
         name: 'createdAt',
         type: 'Date',
@@ -153,7 +152,7 @@ export const DEFAULT_CLASSES: UMLClass[] = [
     ],
     methods: [
       {
-        id: uuidv4(),
+        id: 'default-notification-markasread-method',
         visibility: '+',
         name: 'markAsRead',
         returnType: 'void',

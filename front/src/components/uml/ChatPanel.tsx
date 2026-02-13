@@ -131,10 +131,8 @@ export default function ChatPanel() {
       setIsLoading(true);
       try {
         // Check if this is a request to generate UML from description
-        const isUMLGeneration = userMessage.toLowerCase().includes('générer') || 
-                               userMessage.toLowerCase().includes('créer') ||
-                               userMessage.toLowerCase().includes('generate') ||
-                               userMessage.toLowerCase().includes('create');
+        const isUMLGeneration = /\b(générer|créer|generate|create)\b.*\b(diagramme|diagram|uml|classe|class)/i.test(userMessage) ||
+                               /\b(diagramme|diagram|uml)\b.*\b(générer|créer|generate|create)/i.test(userMessage);
 
         if (isUMLGeneration) {
           // Generate JSON from natural language
