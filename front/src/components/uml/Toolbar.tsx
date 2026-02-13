@@ -1,10 +1,11 @@
 import { useUMLStore } from '@/stores/umlStore';
 import { Button } from '@/components/ui/button';
 import {
-  Plus, Undo2, Redo2, Download, Upload, Package, Save,
+  Plus, Undo2, Redo2, Download, Upload, Package, Save, Loader2,
 } from 'lucide-react';
 import { downloadZip } from '@/lib/codeGenerator';
-import { useRef } from 'react';
+import { apiClient } from '@/lib/api';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Toolbar() {
@@ -13,6 +14,7 @@ export default function Toolbar() {
     exportDiagram, importDiagram, saveToLocal, classes,
   } = useUMLStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleExport = () => {
     const diagram = exportDiagram();
@@ -53,11 +55,37 @@ export default function Toolbar() {
       toast.error('Ajoutez au moins une classe');
       return;
     }
+    
+    setIsGenerating(true);
+    
     try {
-      await downloadZip(diagram);
-      toast.success('ZIP généré avec succès');
+      // Try to use the backend API first
+      try {
+        const response = await apiClient.generateScaffolding({
+          umlData: diagram,
+          language: 'python',
+          framework: 'fastapi',
+          useLlm: false,
+        });
+        
+        toast.success(`Scaffolding généré: ${response.files.length} fichiers`);
+        
+        // Show additional info if available
+        if (response.llmInsights) {
+          toast.info(response.llmInsights, { duration: 5000 });
+        }
+      } catch (apiError) {
+        // Fallback to local generation if API is not available
+        console.warn('API not available, using local generation:', apiError);
+        toast.warning('Backend API non disponible, utilisation de la génération locale');
+        await downloadZip(diagram);
+        toast.success('ZIP généré avec succès (local)');
+      }
     } catch (err) {
+      console.error('Generation error:', err);
       toast.error('Erreur lors de la génération');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -95,8 +123,21 @@ export default function Toolbar() {
 
       <span className="text-[10px] text-muted-foreground font-mono mr-2">{classes.length} classes</span>
 
-      <Button size="sm" className="h-7 text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleGenerate}>
-        <Package className="h-3.5 w-3.5" /> Générer ZIP
+      <Button 
+        size="sm" 
+        className="h-7 text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90" 
+        onClick={handleGenerate}
+        disabled={isGenerating}
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Génération...
+          </>
+        ) : (
+          <>
+            <Package className="h-3.5 w-3.5" /> Générer ZIP
+          </>
+        )}
       </Button>
     </div>
   );

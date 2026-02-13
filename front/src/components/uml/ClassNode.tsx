@@ -2,6 +2,8 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { UMLClass } from '@/types/uml';
 import { useUMLStore } from '@/stores/umlStore';
+import { isDefaultClass } from '@/lib/defaultClasses';
+import { Lock } from 'lucide-react';
 
 const visibilitySymbol = (v: string) => {
   switch (v) {
@@ -17,12 +19,13 @@ const ClassNode = memo(({ data, id, selected }: NodeProps) => {
   const setSelectedClass = useUMLStore((s) => s.setSelectedClass);
 
   const cls = data as unknown as UMLClass;
+  const isDefault = isDefaultClass(id);
 
   return (
     <div
       className={`min-w-[180px] rounded-lg border-2 overflow-hidden shadow-lg transition-shadow ${
         selected ? 'border-primary shadow-primary/20' : 'border-node-border shadow-black/20'
-      }`}
+      } ${isDefault ? 'ring-2 ring-yellow-500/30' : ''}`}
       style={{ background: 'hsl(var(--node-bg))' }}
       onClick={() => setSelectedClass(id)}
     >
@@ -30,6 +33,12 @@ const ClassNode = memo(({ data, id, selected }: NodeProps) => {
 
       {/* Header */}
       <div className="px-3 py-2 text-center border-b border-node-border" style={{ background: 'hsl(var(--node-header) / 0.15)' }}>
+        {isDefault && (
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Lock className="h-3 w-3 text-yellow-500" />
+            <div className="text-[9px] text-yellow-500 font-mono">default</div>
+          </div>
+        )}
         {cls.isAbstract && (
           <div className="text-[10px] text-muted-foreground italic font-mono">{'<<abstract>>'}</div>
         )}
