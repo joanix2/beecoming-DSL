@@ -11,13 +11,18 @@ class LLMService:
     """Service for interacting with Language Models using LangChain"""
     
     def __init__(self):
-        self.llm = ChatOpenAI(
-            model=settings.OPENAI_MODEL,
-            temperature=settings.OPENAI_TEMPERATURE,
-            max_tokens=settings.OPENAI_MAX_TOKENS,
-            streaming=True,
-            api_key=settings.OPENAI_API_KEY
-        )
+        self.enabled = bool(settings.OPENAI_API_KEY)
+        
+        if self.enabled:
+            self.llm = ChatOpenAI(
+                model=settings.OPENAI_MODEL,
+                temperature=settings.OPENAI_TEMPERATURE,
+                max_tokens=settings.OPENAI_MAX_TOKENS,
+                streaming=True,
+                api_key=settings.OPENAI_API_KEY
+            )
+        else:
+            self.llm = None
         
         self.json_generation_prompt = ChatPromptTemplate.from_messages([
             ("system", """You are a helpful assistant that generates valid JSON based on user requests.
@@ -33,6 +38,11 @@ Be concise and provide practical solutions."""),
             ("user", "{input}")
         ])
     
+    def _check_enabled(self):
+        """Check if LLM service is enabled"""
+        if not self.enabled:
+            raise ValueError("LLM service is not enabled. Please configure OPENAI_API_KEY.")
+    
     async def generate_json(self, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Generate JSON output from a prompt
@@ -44,6 +54,8 @@ Be concise and provide practical solutions."""),
         Returns:
             Generated JSON as a dictionary
         """
+        self._check_enabled()
+        
         full_prompt = prompt
         if context:
             full_prompt = f"Context: {json.dumps(context)}\n\nRequest: {prompt}"
@@ -79,6 +91,8 @@ Be concise and provide practical solutions."""),
         Yields:
             Chunks of the response as they are generated
         """
+        self._check_enabled()
+        
         full_message = message
         if context:
             full_message = f"Context: {json.dumps(context)}\n\nMessage: {message}"
@@ -104,6 +118,8 @@ Be concise and provide practical solutions."""),
         Returns:
             Generated code suggestions
         """
+        self._check_enabled()
+        
         prompt = f"""Given the following UML class diagram data, provide suggestions for code generation in {target_language}.
 Analyze the classes, attributes, methods, and relationships.
 
