@@ -1,0 +1,115 @@
+{
+  "project_name": "TaskManager",
+  "description": "A simple task management application",
+  "database": {
+    "provider": "PostgreSQL",
+    "connection_string_template": "Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+  },
+  "models": [
+    {
+      "name": "Task",
+      "properties": [
+        {
+          "name": "Id",
+          "type": "int",
+          "isPrimaryKey": true,
+          "isAutoIncrement": true
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "maxLength": 200,
+          "isRequired": true
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "maxLength": 1000,
+          "isRequired": false
+        },
+        {
+          "name": "IsCompleted",
+          "type": "bool",
+          "defaultValue": "false"
+        },
+        {
+          "name": "DueDate",
+          "type": "DateTime",
+          "isRequired": false
+        },
+        {
+          "name": "CreatedAt",
+          "type": "DateTime",
+          "defaultValue": "DateTime.UtcNow"
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "properties": [
+        {
+          "name": "Id",
+          "type": "int",
+          "isPrimaryKey": true,
+          "isAutoIncrement": true
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "maxLength": 255,
+          "isRequired": true,
+          "isUnique": true
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "maxLength": 100,
+          "isRequired": true
+        },
+        {
+          "name": "CreatedAt",
+          "type": "DateTime",
+          "defaultValue": "DateTime.UtcNow"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "name": "UserTasks",
+      "from": "User",
+      "to": "Task",
+      "type": "one-to-many",
+      "foreignKey": "UserId"
+    }
+  ],
+  "api": {
+    "endpoints": [
+      {
+        "model": "Task",
+        "methods": ["GET", "POST", "PUT", "DELETE"]
+      },
+      {
+        "model": "User",
+        "methods": ["GET", "POST", "PUT", "DELETE"]
+      }
+    ]
+  },
+  "frontend": {
+    "framework": "Angular",
+    "components": [
+      {
+        "name": "TaskList",
+        "route": "/tasks"
+      },
+      {
+        "name": "TaskDetail",
+        "route": "/tasks/:id"
+      },
+      {
+        "name": "UserList",
+        "route": "/users"
+      }
+    ]
+  }
+}
