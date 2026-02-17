@@ -100,7 +100,7 @@ def test_generate_application():
             if response.status_code == 200:
                 log_success("API server is ready")
                 break
-        except:
+        except (requests.RequestException, ConnectionError):
             if i == max_retries - 1:
                 log_error("API server failed to start")
                 api_process.kill()
