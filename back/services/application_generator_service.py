@@ -6,7 +6,7 @@ import shutil
 from datetime import datetime
 
 from services.template_service import template_service
-from models.app_spec import ApplicationSpec
+from models.app_spec import ApplicationSpec, ModelSpec, PropertySpec, EndpointSpec
 from config import settings
 
 logger = logging.getLogger(__name__)

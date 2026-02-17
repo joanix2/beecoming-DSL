@@ -17,6 +17,7 @@ sse-starlette==1.8.2
 
 # HTTP client
 httpx==0.26.0
+requests==2.31.0
 
 # Optional: async support
 aiofiles==23.2.1
