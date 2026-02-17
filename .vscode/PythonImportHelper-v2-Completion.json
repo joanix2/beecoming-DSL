@@ -48,6 +48,54 @@
         "documentation": {}
     },
     {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -113,6 +161,22 @@
     },
     {
         "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -137,6 +201,38 @@
     },
     {
         "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -280,6 +376,22 @@
         "documentation": {}
     },
     {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
         "label": "BackgroundTasks",
         "importPath": "fastapi",
         "description": "fastapi",
@@ -293,6 +405,14 @@
         "description": "fastapi",
         "isExtraImport": true,
         "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "application_generator_service",
+        "importPath": "services.application_generator_service",
+        "description": "services.application_generator_service",
+        "isExtraImport": true,
+        "detail": "services.application_generator_service",
         "documentation": {}
     },
     {
@@ -377,67 +497,19 @@
         "documentation": {}
     },
     {
-        "label": "ChatOpenAI",
-        "importPath": "langchain_openai",
-        "description": "langchain_openai",
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
         "isExtraImport": true,
-        "detail": "langchain_openai",
+        "detail": "pathlib",
         "documentation": {}
     },
     {
-        "label": "ChatPromptTemplate",
-        "importPath": "langchain.prompts",
-        "description": "langchain.prompts",
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
         "isExtraImport": true,
-        "detail": "langchain.prompts",
-        "documentation": {}
-    },
-    {
-        "label": "StrOutputParser",
-        "importPath": "langchain.schema.output_parser",
-        "description": "langchain.schema.output_parser",
-        "isExtraImport": true,
-        "detail": "langchain.schema.output_parser",
-        "documentation": {}
-    },
-    {
-        "label": "RunnablePassthrough",
-        "importPath": "langchain.schema.runnable",
-        "description": "langchain.schema.runnable",
-        "isExtraImport": true,
-        "detail": "langchain.schema.runnable",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
+        "detail": "pathlib",
         "documentation": {}
     },
     {
@@ -474,6 +546,23 @@
         "documentation": {}
     },
     {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "datetime",
         "importPath": "datetime",
         "description": "datetime",
@@ -487,6 +576,118 @@
         "description": "services.template_service",
         "isExtraImport": true,
         "detail": "services.template_service",
+        "documentation": {}
+    },
+    {
+        "label": "template_service",
+        "importPath": "services.template_service",
+        "description": "services.template_service",
+        "isExtraImport": true,
+        "detail": "services.template_service",
+        "documentation": {}
+    },
+    {
+        "label": "ApplicationSpec",
+        "importPath": "models.app_spec",
+        "description": "models.app_spec",
+        "isExtraImport": true,
+        "detail": "models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "ModelSpec",
+        "importPath": "models.app_spec",
+        "description": "models.app_spec",
+        "isExtraImport": true,
+        "detail": "models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "PropertySpec",
+        "importPath": "models.app_spec",
+        "description": "models.app_spec",
+        "isExtraImport": true,
+        "detail": "models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "EndpointSpec",
+        "importPath": "models.app_spec",
+        "description": "models.app_spec",
+        "isExtraImport": true,
+        "detail": "models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ChatOpenAI",
+        "importPath": "langchain_openai",
+        "description": "langchain_openai",
+        "isExtraImport": true,
+        "detail": "langchain_openai",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain.prompts",
+        "description": "langchain.prompts",
+        "isExtraImport": true,
+        "detail": "langchain.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "StrOutputParser",
+        "importPath": "langchain.schema.output_parser",
+        "description": "langchain.schema.output_parser",
+        "isExtraImport": true,
+        "detail": "langchain.schema.output_parser",
+        "documentation": {}
+    },
+    {
+        "label": "RunnablePassthrough",
+        "importPath": "langchain.schema.runnable",
+        "description": "langchain.schema.runnable",
+        "isExtraImport": true,
+        "detail": "langchain.schema.runnable",
         "documentation": {}
     },
     {
@@ -592,6 +793,131 @@
         "description": "routes",
         "isExtraImport": true,
         "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "application",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "PropertySpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class PropertySpec(BaseModel):\n    \"\"\"Specification for a model property\"\"\"\n    name: str\n    type: str\n    isPrimaryKey: bool = Field(default=False, alias=\"isPrimaryKey\")\n    isAutoIncrement: bool = Field(default=False, alias=\"isAutoIncrement\")\n    isRequired: bool = Field(default=False, alias=\"isRequired\")\n    isUnique: bool = Field(default=False, alias=\"isUnique\")\n    maxLength: Optional[int] = Field(default=None, alias=\"maxLength\")\n    defaultValue: Optional[str] = Field(default=None, alias=\"defaultValue\")",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "ModelSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class ModelSpec(BaseModel):\n    \"\"\"Specification for a data model\"\"\"\n    name: str\n    properties: List[PropertySpec]\nclass RelationSpec(BaseModel):\n    \"\"\"Specification for a model relation\"\"\"\n    name: str\n    from_model: str = Field(..., alias=\"from\")\n    to_model: str = Field(..., alias=\"to\")\n    type: str  # one-to-many, many-to-one, many-to-many, one-to-one",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "RelationSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class RelationSpec(BaseModel):\n    \"\"\"Specification for a model relation\"\"\"\n    name: str\n    from_model: str = Field(..., alias=\"from\")\n    to_model: str = Field(..., alias=\"to\")\n    type: str  # one-to-many, many-to-one, many-to-many, one-to-one\n    foreignKey: Optional[str] = None\n    class Config:\n        populate_by_name = True\nclass EndpointSpec(BaseModel):",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "EndpointSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class EndpointSpec(BaseModel):\n    \"\"\"Specification for an API endpoint\"\"\"\n    model: str\n    methods: List[str]\nclass ApiSpec(BaseModel):\n    \"\"\"Specification for the API\"\"\"\n    endpoints: List[EndpointSpec]\nclass ComponentSpec(BaseModel):\n    \"\"\"Specification for a frontend component\"\"\"\n    name: str",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "ApiSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class ApiSpec(BaseModel):\n    \"\"\"Specification for the API\"\"\"\n    endpoints: List[EndpointSpec]\nclass ComponentSpec(BaseModel):\n    \"\"\"Specification for a frontend component\"\"\"\n    name: str\n    route: str\nclass FrontendSpec(BaseModel):\n    \"\"\"Specification for the frontend\"\"\"\n    framework: str",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "ComponentSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class ComponentSpec(BaseModel):\n    \"\"\"Specification for a frontend component\"\"\"\n    name: str\n    route: str\nclass FrontendSpec(BaseModel):\n    \"\"\"Specification for the frontend\"\"\"\n    framework: str\n    components: List[ComponentSpec]\nclass DatabaseSpec(BaseModel):\n    \"\"\"Specification for the database\"\"\"",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "FrontendSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class FrontendSpec(BaseModel):\n    \"\"\"Specification for the frontend\"\"\"\n    framework: str\n    components: List[ComponentSpec]\nclass DatabaseSpec(BaseModel):\n    \"\"\"Specification for the database\"\"\"\n    provider: str\n    connection_string_template: str = Field(..., alias=\"connection_string_template\")\n    class Config:\n        populate_by_name = True",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "DatabaseSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class DatabaseSpec(BaseModel):\n    \"\"\"Specification for the database\"\"\"\n    provider: str\n    connection_string_template: str = Field(..., alias=\"connection_string_template\")\n    class Config:\n        populate_by_name = True\nclass ApplicationSpec(BaseModel):\n    \"\"\"Complete application specification\"\"\"\n    project_name: str = Field(..., alias=\"project_name\")\n    description: str",
+        "detail": "back.models.app_spec",
+        "documentation": {}
+    },
+    {
+        "label": "ApplicationSpec",
+        "kind": 6,
+        "importPath": "back.models.app_spec",
+        "description": "back.models.app_spec",
+        "peekOfCode": "class ApplicationSpec(BaseModel):\n    \"\"\"Complete application specification\"\"\"\n    project_name: str = Field(..., alias=\"project_name\")\n    description: str\n    database: DatabaseSpec\n    models: List[ModelSpec]\n    relations: List[RelationSpec] = Field(default_factory=list)\n    api: ApiSpec\n    frontend: FrontendSpec\n    class Config:",
+        "detail": "back.models.app_spec",
         "documentation": {}
     },
     {
@@ -705,6 +1031,15 @@
     {
         "label": "router",
         "kind": 5,
+        "importPath": "back.routes.application",
+        "description": "back.routes.application",
+        "peekOfCode": "router = APIRouter()\n@router.post(\"/generate\")\nasync def generate_application(spec: Dict[str, Any]):\n    \"\"\"\n    Generate a complete application from JSON specification\n    Takes an application specification JSON and generates a complete\n    full-stack application with backend, frontend, Docker configuration,\n    database migrations, and tests.\n    Args:\n        spec: Application specification dictionary",
+        "detail": "back.routes.application",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
         "importPath": "back.routes.chat",
         "description": "back.routes.chat",
         "peekOfCode": "router = APIRouter()\n@router.post(\"/stream\")\nasync def chat_stream(message: ChatMessage):\n    \"\"\"\n    Chat endpoint with Server-Sent Events (SSE)\n    Streams the LLM response in real-time using SSE format.\n    Args:\n        message: ChatMessage with user's message and optional context\n    Returns:\n        StreamingResponse with SSE events",
@@ -721,11 +1056,38 @@
         "documentation": {}
     },
     {
+        "label": "ApplicationGeneratorService",
+        "kind": 6,
+        "importPath": "back.services.application_generator_service",
+        "description": "back.services.application_generator_service",
+        "peekOfCode": "class ApplicationGeneratorService:\n    \"\"\"Service for generating complete applications from JSON specifications\"\"\"\n    def __init__(self):\n        self.template_service = template_service\n        self.templates_dir = settings.TEMPLATES_DIR\n        self.output_dir = settings.OUTPUT_DIR\n        self.output_dir.mkdir(parents=True, exist_ok=True)\n    async def generate_application(\n        self,\n        app_spec_data: Dict[str, Any],",
+        "detail": "back.services.application_generator_service",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "back.services.application_generator_service",
+        "description": "back.services.application_generator_service",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass ApplicationGeneratorService:\n    \"\"\"Service for generating complete applications from JSON specifications\"\"\"\n    def __init__(self):\n        self.template_service = template_service\n        self.templates_dir = settings.TEMPLATES_DIR\n        self.output_dir = settings.OUTPUT_DIR\n        self.output_dir.mkdir(parents=True, exist_ok=True)\n    async def generate_application(\n        self,",
+        "detail": "back.services.application_generator_service",
+        "documentation": {}
+    },
+    {
+        "label": "application_generator_service",
+        "kind": 5,
+        "importPath": "back.services.application_generator_service",
+        "description": "back.services.application_generator_service",
+        "peekOfCode": "application_generator_service = ApplicationGeneratorService()",
+        "detail": "back.services.application_generator_service",
+        "documentation": {}
+    },
+    {
         "label": "LLMService",
         "kind": 6,
         "importPath": "back.services.llm_service",
         "description": "back.services.llm_service",
-        "peekOfCode": "class LLMService:\n    \"\"\"Service for interacting with Language Models using LangChain\"\"\"\n    def __init__(self):\n        self.llm = ChatOpenAI(\n            model=settings.OPENAI_MODEL,\n            temperature=settings.OPENAI_TEMPERATURE,\n            max_tokens=settings.OPENAI_MAX_TOKENS,\n            streaming=True,\n            api_key=settings.OPENAI_API_KEY\n        )",
+        "peekOfCode": "class LLMService:\n    \"\"\"Service for interacting with Language Models using LangChain\"\"\"\n    def __init__(self):\n        self.enabled = bool(settings.OPENAI_API_KEY)\n        if self.enabled:\n            self.llm = ChatOpenAI(\n                model=settings.OPENAI_MODEL,\n                temperature=settings.OPENAI_TEMPERATURE,\n                max_tokens=settings.OPENAI_MAX_TOKENS,\n                streaming=True,",
         "detail": "back.services.llm_service",
         "documentation": {}
     },
@@ -797,7 +1159,7 @@
         "kind": 6,
         "importPath": "back.config",
         "description": "back.config",
-        "peekOfCode": "class Settings(BaseSettings):\n    \"\"\"Application settings loaded from environment variables\"\"\"\n    # Application\n    APP_NAME: str = \"FastAPI Scaffolder\"\n    VERSION: str = \"1.0.0\"\n    DEBUG: bool = True\n    HOST: str = \"0.0.0.0\"\n    PORT: int = 8000\n    # CORS\n    ALLOWED_ORIGINS: List[str] = [\"http://localhost:4200\", \"http://localhost:3000\"]",
+        "peekOfCode": "class Settings(BaseSettings):\n    \"\"\"Application settings loaded from environment variables\"\"\"\n    # Application\n    APP_NAME: str = \"FastAPI Scaffolder\"\n    VERSION: str = \"1.0.0\"\n    DEBUG: bool = True\n    HOST: str = \"0.0.0.0\"\n    PORT: int = 8000\n    # CORS\n    ALLOWED_ORIGINS: List[str] = [\"http://localhost:4200\", \"http://localhost:3000\", \"http://localhost:5173\", \"http://localhost:8080\"]",
         "detail": "back.config",
         "documentation": {}
     },
@@ -817,6 +1179,123 @@
         "description": "back.main",
         "peekOfCode": "app = FastAPI(\n    title=settings.APP_NAME,\n    description=\"FastAPI with LLM and Scaffolding capabilities\",\n    version=settings.VERSION,\n    lifespan=lifespan\n)\n# CORS middleware configuration\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=settings.ALLOWED_ORIGINS,",
         "detail": "back.main",
+        "documentation": {}
+    },
+    {
+        "label": "Colors",
+        "kind": 6,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "class Colors:\n    GREEN = '\\033[92m'\n    RED = '\\033[91m'\n    YELLOW = '\\033[93m'\n    BLUE = '\\033[94m'\n    RESET = '\\033[0m'\ndef log_step(message):\n    \"\"\"Log a test step\"\"\"\n    print(f\"\\n{Colors.BLUE}➜ {message}{Colors.RESET}\")\ndef log_success(message):",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "log_step",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def log_step(message):\n    \"\"\"Log a test step\"\"\"\n    print(f\"\\n{Colors.BLUE}➜ {message}{Colors.RESET}\")\ndef log_success(message):\n    \"\"\"Log a success message\"\"\"\n    print(f\"{Colors.GREEN}✓ {message}{Colors.RESET}\")\ndef log_error(message):\n    \"\"\"Log an error message\"\"\"\n    print(f\"{Colors.RED}✗ {message}{Colors.RESET}\")\ndef log_warning(message):",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "log_success",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def log_success(message):\n    \"\"\"Log a success message\"\"\"\n    print(f\"{Colors.GREEN}✓ {message}{Colors.RESET}\")\ndef log_error(message):\n    \"\"\"Log an error message\"\"\"\n    print(f\"{Colors.RED}✗ {message}{Colors.RESET}\")\ndef log_warning(message):\n    \"\"\"Log a warning message\"\"\"\n    print(f\"{Colors.YELLOW}⚠ {message}{Colors.RESET}\")\ndef run_command(cmd, cwd=None, check=True, capture_output=False):",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "log_error",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def log_error(message):\n    \"\"\"Log an error message\"\"\"\n    print(f\"{Colors.RED}✗ {message}{Colors.RESET}\")\ndef log_warning(message):\n    \"\"\"Log a warning message\"\"\"\n    print(f\"{Colors.YELLOW}⚠ {message}{Colors.RESET}\")\ndef run_command(cmd, cwd=None, check=True, capture_output=False):\n    \"\"\"Run a shell command\"\"\"\n    try:\n        if capture_output:",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "log_warning",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def log_warning(message):\n    \"\"\"Log a warning message\"\"\"\n    print(f\"{Colors.YELLOW}⚠ {message}{Colors.RESET}\")\ndef run_command(cmd, cwd=None, check=True, capture_output=False):\n    \"\"\"Run a shell command\"\"\"\n    try:\n        if capture_output:\n            result = subprocess.run(\n                cmd,\n                shell=True,",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "run_command",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def run_command(cmd, cwd=None, check=True, capture_output=False):\n    \"\"\"Run a shell command\"\"\"\n    try:\n        if capture_output:\n            result = subprocess.run(\n                cmd,\n                shell=True,\n                cwd=cwd,\n                check=check,\n                capture_output=True,",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "test_generate_application",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def test_generate_application():\n    \"\"\"Test application generation from JSON\"\"\"\n    log_step(\"Step 1: Testing application generation from JSON\")\n    # Read the example specification\n    spec_file = Path(__file__).parent / \"example-app-spec.json\"\n    if not spec_file.exists():\n        log_error(f\"Example specification not found: {spec_file}\")\n        return False\n    with open(spec_file, 'r') as f:\n        spec = json.load(f)",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "test_validate_files",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def test_validate_files(result):\n    \"\"\"Validate that all required files are created\"\"\"\n    log_step(\"Step 2: Validating generated files\")\n    output_path = Path(result['output_path'])\n    required_files = [\n        \"README.md\",\n        \"API.md\",\n        \"docker-compose.yml\",\n        \".env.example\",\n        \"backend/Dockerfile\",",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "test_docker_build",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def test_docker_build(result):\n    \"\"\"Test Docker image builds\"\"\"\n    log_step(\"Step 3: Building Docker images\")\n    output_path = Path(result['output_path'])\n    # Build backend\n    log_step(\"Building backend Docker image...\")\n    try:\n        run_command(\n            \"docker build -t test-backend:latest .\",\n            cwd=output_path / \"backend\"",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "test_docker_compose",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def test_docker_compose(result):\n    \"\"\"Test docker-compose setup\"\"\"\n    log_step(\"Step 4: Testing docker-compose\")\n    output_path = Path(result['output_path'])\n    # Copy .env.example to .env\n    env_example = output_path / \".env.example\"\n    env_file = output_path / \".env\"\n    shutil.copy(env_example, env_file)\n    try:\n        # Start services",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "test_migrations",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def test_migrations(result):\n    \"\"\"Test database migrations\"\"\"\n    log_step(\"Step 5: Testing database migrations\")\n    output_path = Path(result['output_path'])\n    backend_path = output_path / \"backend\"\n    # Check if migration script exists\n    migration_script = backend_path / \"Migrations\" / \"apply-migrations.sh\"\n    if not migration_script.exists():\n        log_warning(\"Migration script not found (may need to be run inside container)\")\n        return True",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "test_backend_tests",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def test_backend_tests(result):\n    \"\"\"Run backend tests\"\"\"\n    log_step(\"Step 6: Running backend tests\")\n    output_path = Path(result['output_path'])\n    tests_dir = output_path / \"backend\" / \"Tests\"\n    if not tests_dir.exists():\n        log_warning(\"Tests directory not found\")\n        return True\n    # Check that test files were generated\n    test_files = list(tests_dir.glob(\"*.cs\"))",
+        "detail": "test_generator",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "test_generator",
+        "description": "test_generator",
+        "peekOfCode": "def main():\n    \"\"\"Main test function\"\"\"\n    print(f\"\\n{Colors.BLUE}{'='*60}{Colors.RESET}\")\n    print(f\"{Colors.BLUE}  Application Generator End-to-End Test{Colors.RESET}\")\n    print(f\"{Colors.BLUE}{'='*60}{Colors.RESET}\\n\")\n    try:\n        # Test 1: Generate application\n        result = test_generate_application()\n        if not result:\n            log_error(\"Application generation failed\")",
+        "detail": "test_generator",
         "documentation": {}
     }
 ]
