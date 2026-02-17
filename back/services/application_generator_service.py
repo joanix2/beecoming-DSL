@@ -46,6 +46,8 @@ class ApplicationGeneratorService:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_path = self.output_dir / f"{app_spec.project_name}_{timestamp}"
         
+        # Ensure output_path is absolute
+        output_path = output_path.resolve()
         output_path.mkdir(parents=True, exist_ok=True)
         
         # Generate backend

@@ -193,6 +193,16 @@ jobs:
       - name: Build generated backend
         run: |
           APP_PATH=$(cat generated_app_path.txt)
+          echo "Application generated at: $APP_PATH"
+          
+          # Verify backend directory exists
+          if [ ! -d "$APP_PATH/backend" ]; then
+            echo "ERROR: Backend directory does not exist at $APP_PATH/backend"
+            echo "Directory contents:"
+            ls -la "$APP_PATH" || echo "Output directory does not exist"
+            exit 1
+          fi
+          
           cd "$APP_PATH/backend"
           dotnet restore
           dotnet build

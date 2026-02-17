@@ -72,7 +72,7 @@ def test_generate_application():
     log_step("Step 1: Testing application generation from JSON")
     
     # Read the example specification
-    spec_file = Path(__file__).parent.parent / "example-app-spec.json"
+    spec_file = Path(__file__).parent / "example-app-spec.json"
     if not spec_file.exists():
         log_error(f"Example specification not found: {spec_file}")
         return False
@@ -86,7 +86,7 @@ def test_generate_application():
     log_step("Starting FastAPI server...")
     api_process = subprocess.Popen(
         ["python", "main.py"],
-        cwd=Path(__file__).parent.parent / "back",
+        cwd=Path(__file__).parent / "back",
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
