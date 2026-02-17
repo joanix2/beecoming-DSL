@@ -224,38 +224,6 @@
         "documentation": {}
     },
     {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Dict",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Any",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "AsyncIterator",
         "importPath": "typing",
         "description": "typing",
@@ -497,11 +465,67 @@
         "documentation": {}
     },
     {
-        "label": "Path",
-        "importPath": "pathlib",
-        "description": "pathlib",
+        "label": "ChatOpenAI",
+        "importPath": "langchain_openai",
+        "description": "langchain_openai",
         "isExtraImport": true,
-        "detail": "pathlib",
+        "detail": "langchain_openai",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain.prompts",
+        "description": "langchain.prompts",
+        "isExtraImport": true,
+        "detail": "langchain.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "StrOutputParser",
+        "importPath": "langchain.schema.output_parser",
+        "description": "langchain.schema.output_parser",
+        "isExtraImport": true,
+        "detail": "langchain.schema.output_parser",
+        "documentation": {}
+    },
+    {
+        "label": "RunnablePassthrough",
+        "importPath": "langchain.schema.runnable",
+        "description": "langchain.schema.runnable",
+        "isExtraImport": true,
+        "detail": "langchain.schema.runnable",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
         "documentation": {}
     },
     {
@@ -546,23 +570,6 @@
         "documentation": {}
     },
     {
-        "label": "shutil",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "shutil",
-        "description": "shutil",
-        "detail": "shutil",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
         "label": "datetime",
         "importPath": "datetime",
         "description": "datetime",
@@ -576,118 +583,6 @@
         "description": "services.template_service",
         "isExtraImport": true,
         "detail": "services.template_service",
-        "documentation": {}
-    },
-    {
-        "label": "template_service",
-        "importPath": "services.template_service",
-        "description": "services.template_service",
-        "isExtraImport": true,
-        "detail": "services.template_service",
-        "documentation": {}
-    },
-    {
-        "label": "ApplicationSpec",
-        "importPath": "models.app_spec",
-        "description": "models.app_spec",
-        "isExtraImport": true,
-        "detail": "models.app_spec",
-        "documentation": {}
-    },
-    {
-        "label": "ModelSpec",
-        "importPath": "models.app_spec",
-        "description": "models.app_spec",
-        "isExtraImport": true,
-        "detail": "models.app_spec",
-        "documentation": {}
-    },
-    {
-        "label": "PropertySpec",
-        "importPath": "models.app_spec",
-        "description": "models.app_spec",
-        "isExtraImport": true,
-        "detail": "models.app_spec",
-        "documentation": {}
-    },
-    {
-        "label": "EndpointSpec",
-        "importPath": "models.app_spec",
-        "description": "models.app_spec",
-        "isExtraImport": true,
-        "detail": "models.app_spec",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "ChatOpenAI",
-        "importPath": "langchain_openai",
-        "description": "langchain_openai",
-        "isExtraImport": true,
-        "detail": "langchain_openai",
-        "documentation": {}
-    },
-    {
-        "label": "ChatPromptTemplate",
-        "importPath": "langchain.prompts",
-        "description": "langchain.prompts",
-        "isExtraImport": true,
-        "detail": "langchain.prompts",
-        "documentation": {}
-    },
-    {
-        "label": "StrOutputParser",
-        "importPath": "langchain.schema.output_parser",
-        "description": "langchain.schema.output_parser",
-        "isExtraImport": true,
-        "detail": "langchain.schema.output_parser",
-        "documentation": {}
-    },
-    {
-        "label": "RunnablePassthrough",
-        "importPath": "langchain.schema.runnable",
-        "description": "langchain.schema.runnable",
-        "isExtraImport": true,
-        "detail": "langchain.schema.runnable",
         "documentation": {}
     },
     {
@@ -837,6 +732,15 @@
         "importPath": "requests",
         "description": "requests",
         "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
         "documentation": {}
     },
     {
@@ -1053,33 +957,6 @@
         "description": "back.routes.scaffolding",
         "peekOfCode": "router = APIRouter()\n@router.post(\"/generate\", response_model=ScaffoldingResponse)\nasync def generate_scaffolding(request: ScaffoldingRequest):\n    \"\"\"\n    Generate code scaffolding from UML diagram\n    Takes a UML diagram JSON and generates code in the specified language\n    and framework using Jinja templates and optionally LLM assistance.\n    Args:\n        request: ScaffoldingRequest with UML data and generation options\n    Returns:",
         "detail": "back.routes.scaffolding",
-        "documentation": {}
-    },
-    {
-        "label": "ApplicationGeneratorService",
-        "kind": 6,
-        "importPath": "back.services.application_generator_service",
-        "description": "back.services.application_generator_service",
-        "peekOfCode": "class ApplicationGeneratorService:\n    \"\"\"Service for generating complete applications from JSON specifications\"\"\"\n    def __init__(self):\n        self.template_service = template_service\n        self.templates_dir = settings.TEMPLATES_DIR\n        self.output_dir = settings.OUTPUT_DIR\n        self.output_dir.mkdir(parents=True, exist_ok=True)\n    async def generate_application(\n        self,\n        app_spec_data: Dict[str, Any],",
-        "detail": "back.services.application_generator_service",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "back.services.application_generator_service",
-        "description": "back.services.application_generator_service",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass ApplicationGeneratorService:\n    \"\"\"Service for generating complete applications from JSON specifications\"\"\"\n    def __init__(self):\n        self.template_service = template_service\n        self.templates_dir = settings.TEMPLATES_DIR\n        self.output_dir = settings.OUTPUT_DIR\n        self.output_dir.mkdir(parents=True, exist_ok=True)\n    async def generate_application(\n        self,",
-        "detail": "back.services.application_generator_service",
-        "documentation": {}
-    },
-    {
-        "label": "application_generator_service",
-        "kind": 5,
-        "importPath": "back.services.application_generator_service",
-        "description": "back.services.application_generator_service",
-        "peekOfCode": "application_generator_service = ApplicationGeneratorService()",
-        "detail": "back.services.application_generator_service",
         "documentation": {}
     },
     {
