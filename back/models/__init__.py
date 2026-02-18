@@ -11,6 +11,13 @@ from .uml import (
 )
 from .chat import ChatMessage, ChatResponse, JSONGenerationRequest
 from .scaffolding import ScaffoldingRequest, ScaffoldingResponse
+from .validation import (
+    ValidationRequest,
+    ValidationResponse,
+    ValidationErrorItem,
+    LexerToken,
+    LexerResponse,
+)
 
 __all__ = [
     "UMLDiagram",
@@ -25,4 +32,9 @@ __all__ = [
     "JSONGenerationRequest",
     "ScaffoldingRequest",
     "ScaffoldingResponse",
+    "ValidationRequest",
+    "ValidationResponse",
+    "ValidationErrorItem",
+    "LexerToken",
+    "LexerResponse",
 ]

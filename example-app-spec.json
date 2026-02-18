@@ -1,115 +1,132 @@
 {
-  "project_name": "TaskManager",
-  "description": "A simple task management application",
-  "database": {
-    "provider": "PostgreSQL",
-    "connection_string_template": "Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+  "config": {
+    "project_name": "GestionClients",
+    "description": "Gestion de clients, commandes et missions",
+    "database": {
+      "provider": "postgres",
+      "connection_string": "Host=localhost;Port=5432;Database=gestion_clients;Username=postgres;Password=postgres"
+    },
+    "api": {
+      "port": 5000,
+      "version": "v1",
+      "base_url": "/api"
+    },
+    "frontend": {
+      "port": 3000,
+      "framework": "angular"
+    },
+    "features": {
+      "auth": true,
+      "email_service": false,
+      "file_service": false,
+      "notifications": false,
+      "logging": true
+    }
   },
   "models": [
     {
-      "name": "Task",
+      "name": "Client",
       "properties": [
         {
-          "name": "Id",
-          "type": "int",
-          "isPrimaryKey": true,
-          "isAutoIncrement": true
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "max_length": 150,
+          "label": "Nom"
         },
         {
-          "name": "Title",
-          "type": "string",
-          "maxLength": 200,
-          "isRequired": true
+          "name": "email",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "max_length": 255,
+          "label": "Email"
         },
         {
-          "name": "Description",
-          "type": "string",
-          "maxLength": 1000,
-          "isRequired": false
+          "name": "phone",
+          "type": "text",
+          "required": false,
+          "max_length": 30,
+          "label": "Téléphone"
         },
         {
-          "name": "IsCompleted",
-          "type": "bool",
-          "defaultValue": "false"
-        },
-        {
-          "name": "DueDate",
-          "type": "DateTime",
-          "isRequired": false
-        },
-        {
-          "name": "CreatedAt",
-          "type": "DateTime",
-          "defaultValue": "DateTime.UtcNow"
+          "name": "createdAt",
+          "type": "datetime",
+          "required": true,
+          "label": "Créé le"
         }
       ]
     },
     {
-      "name": "User",
+      "name": "Commande",
       "properties": [
         {
-          "name": "Id",
-          "type": "int",
-          "isPrimaryKey": true,
-          "isAutoIncrement": true
+          "name": "reference",
+          "type": "text",
+          "required": true,
+          "unique": true,
+          "max_length": 50,
+          "label": "Référence"
         },
         {
-          "name": "Email",
-          "type": "string",
-          "maxLength": 255,
-          "isRequired": true,
-          "isUnique": true
+          "name": "amount",
+          "type": "number",
+          "required": true,
+          "min_value": 0,
+          "label": "Montant"
         },
         {
-          "name": "Name",
-          "type": "string",
-          "maxLength": 100,
-          "isRequired": true
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "options": ["nouvelle", "en_cours", "livree"],
+          "label": "Statut"
         },
         {
-          "name": "CreatedAt",
-          "type": "DateTime",
-          "defaultValue": "DateTime.UtcNow"
+          "name": "orderDate",
+          "type": "date",
+          "required": true,
+          "label": "Date de commande"
+        }
+      ]
+    },
+    {
+      "name": "Mission",
+      "properties": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "max_length": 200,
+          "label": "Titre"
+        },
+        {
+          "name": "description",
+          "type": "textarea",
+          "required": false,
+          "max_length": 1000,
+          "label": "Description"
+        },
+        {
+          "name": "startDate",
+          "type": "date",
+          "required": true,
+          "label": "Début"
+        },
+        {
+          "name": "endDate",
+          "type": "date",
+          "required": false,
+          "label": "Fin"
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "label": "Active"
         }
       ]
     }
-  ],
-  "relations": [
-    {
-      "name": "UserTasks",
-      "from": "User",
-      "to": "Task",
-      "type": "one-to-many",
-      "foreignKey": "UserId"
-    }
-  ],
-  "api": {
-    "endpoints": [
-      {
-        "model": "Task",
-        "methods": ["GET", "POST", "PUT", "DELETE"]
-      },
-      {
-        "model": "User",
-        "methods": ["GET", "POST", "PUT", "DELETE"]
-      }
-    ]
-  },
-  "frontend": {
-    "framework": "Angular",
-    "components": [
-      {
-        "name": "TaskList",
-        "route": "/tasks"
-      },
-      {
-        "name": "TaskDetail",
-        "route": "/tasks/:id"
-      },
-      {
-        "name": "UserList",
-        "route": "/users"
-      }
-    ]
-  }
+  ]
 }

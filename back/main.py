@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 
-from routes import chat, scaffolding, application
+from routes import chat, scaffolding, application, validation
 from config import settings
 
 @asynccontextmanager
@@ -35,6 +35,7 @@ app.add_middleware(
 app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
 app.include_router(scaffolding.router, prefix="/api/scaffolding", tags=["Scaffolding"])
 app.include_router(application.router, prefix="/api/application", tags=["Application Generator"])
+app.include_router(validation.router, prefix="/api/validation", tags=["DSL Validation"])
 
 @app.get("/")
 async def root():
